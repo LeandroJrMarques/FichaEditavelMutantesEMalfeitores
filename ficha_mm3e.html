@@ -1,0 +1,2952 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha — Mutantes & Malfeitores 3E</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+    --comic-yellow: #FFDE00;
+    --comic-yellow-dark: #E6C200;
+    --comic-yellow-light: #FFF8D6;
+    --comic-red: #D91A1A;
+    --comic-red-dark: #A80E0E;
+    --comic-red-light: #FFECEC;
+    --comic-white: #FFFFFF;
+    --comic-paper: #FAF7EE;
+    --comic-black: #111111;
+    --comic-blue: #1A5FB4;
+
+    --border: #111111;
+    --text: #111111;
+    --text-muted: #555555;
+
+    --primary: var(--comic-red);
+    --primary2: var(--comic-red-dark);
+    --gold: var(--comic-yellow);
+    --accent: var(--comic-red);
+    --success: #1B7A30;
+    --warn: #D97706;
+    --danger: #D91A1A;
+
+    --box-shadow-sm: 2px 2px 0px #111111;
+    --box-shadow: 4px 4px 0px #111111;
+    --box-shadow-lg: 6px 6px 0px #111111;
+    --comic-border: 3px solid #111111;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body {
+    font-family: 'Comic Neue', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background-color: var(--comic-paper);
+    background-image: radial-gradient(circle, rgba(0,0,0,0.065) 1.5px, transparent 1.5px);
+    background-size: 16px 16px;
+    color: var(--text);
+    line-height: 1.55;
+    font-size: 15px;
+}
+
+/* LAYOUT */
+.app-layout{display:flex;min-height:100vh;position:relative;overflow-x:hidden;}
+
+/* SIDEBAR HUD — COMIC DOSSIER */
+.sidebar {
+    width: 320px;
+    min-width: 320px;
+    background: var(--comic-yellow);
+    border-right: 4px solid var(--comic-black);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 10;
+    box-shadow: 4px 0 0px rgba(0,0,0,0.1);
+}
+
+.sidebar-header {
+    background: var(--comic-red);
+    border: 3px solid var(--comic-black);
+    box-shadow: var(--box-shadow);
+    padding: 12px 10px;
+    text-align: center;
+    border-radius: 6px;
+    transform: rotate(-1deg);
+}
+
+.sidebar h2 {
+    font-family: 'Bangers', Impact, 'Arial Black', sans-serif;
+    font-size: 1.8em;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--comic-yellow);
+    text-shadow: 2px 2px 0 #000, -1px -1px 0 #000;
+    line-height: 1.1;
+    margin: 0;
+}
+
+.hud-card {
+    background: var(--comic-white);
+    border: 3px solid var(--comic-black);
+    border-radius: 6px;
+    padding: 12px 14px;
+    box-shadow: var(--box-shadow);
+}
+
+.hud-title {
+    font-family: 'Bangers', Impact, 'Arial Black', sans-serif;
+    font-size: 1.2em;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--comic-red);
+    border-bottom: 2.5px solid var(--comic-black);
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.points-big {
+    text-align: center;
+    font-size: 2.3em;
+    font-family: 'Bangers', Impact, sans-serif;
+    letter-spacing: 1.5px;
+    color: var(--comic-red);
+    background: var(--comic-yellow-light);
+    border: 2.5px solid var(--comic-black);
+    border-radius: 6px;
+    padding: 4px 8px;
+    margin: 8px 0;
+    box-shadow: var(--box-shadow-sm);
+}
+.points-big.over {
+    background: var(--comic-red-light);
+    color: var(--comic-red-dark);
+}
+
+.pts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    font-size: .88em;
+    font-weight: 700;
+    color: #333;
+}
+.val-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: .9em;
+    padding: 5px 2px;
+    border-bottom: 1.5px dashed #ccc;
+    font-weight: 700;
+}
+.val-row:last-child{border-bottom:none;}
+.ok{color:var(--success);font-weight:bold;}.err{color:var(--comic-red);font-weight:900;}
+
+/* MOBILE TOP BAR */
+.mobile-topbar {
+    display: none;
+    background: var(--comic-yellow);
+    border-bottom: 4px solid var(--comic-black);
+    padding: 10px 16px;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+.burger {
+    background: var(--comic-white);
+    border: 2.5px solid var(--comic-black);
+    color: var(--comic-black);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-family: 'Bangers', Impact, sans-serif;
+    font-size: 1.1em;
+    cursor: pointer;
+    box-shadow: var(--box-shadow-sm);
+}
+.mobile-sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:40;}
+.mobile-sidebar-overlay.open{display:block;}
+.sidebar.mobile-open{transform:translateX(0)!important;}
+
+/* MAIN CONTENT */
+.main-content {
+    flex: 1;
+    padding: 24px;
+    max-width: 1040px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.comic-main-banner {
+    width: 100%;
+    margin-bottom: 22px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 4px solid var(--comic-black);
+    box-shadow: var(--box-shadow-lg);
+    position: relative;
+    background: var(--comic-black);
+}
+.comic-main-banner img {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    object-position: center 25%;
+    display: block;
+}
+.comic-banner-badge {
+    position: absolute;
+    bottom: 12px;
+    right: 14px;
+    background: var(--comic-red);
+    color: var(--comic-yellow);
+    font-family: 'Bangers', Impact, sans-serif;
+    font-size: 1.4em;
+    letter-spacing: 2px;
+    padding: 6px 16px;
+    border: 3px solid var(--comic-black);
+    box-shadow: var(--box-shadow);
+    transform: rotate(-2deg);
+    text-shadow: 1.5px 1.5px 0 #000;
+}
+
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: var(--comic-white);
+    border: 3px solid var(--comic-black);
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: var(--box-shadow);
+}
+.header-btns{display:flex;gap:10px;flex-wrap:wrap;}
+
+/* TABS — COMIC CHAPTERS */
+.tabs {
+    display: flex;
+    gap: 6px;
+    border-bottom: 4px solid var(--comic-black);
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    padding-bottom: 2px;
+}
+.tab {
+    font-family: 'Bangers', Impact, 'Arial Black', sans-serif;
+    font-size: 1.15em;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    cursor: pointer;
+    background: var(--comic-white);
+    border: 3px solid var(--comic-black);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    color: var(--comic-black);
+    box-shadow: 2px -2px 0px rgba(0,0,0,0.1);
+    transition: all 0.15s ease;
+    margin-bottom: -4px;
+}
+.tab:hover {
+    background: var(--comic-yellow-light);
+    transform: translateY(-2px);
+}
+.tab.active {
+    background: var(--comic-yellow) !important;
+    color: var(--comic-black) !important;
+    border: 3px solid var(--comic-black) !important;
+    border-bottom: 4px solid var(--comic-yellow) !important;
+    box-shadow: 3px -3px 0px #111;
+    transform: translateY(-4px);
+    z-index: 2;
+}
+
+.tab-content{display:none;animation:fadeIn .2s;}
+.tab-content.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+
+/* TAB ILLUSTRATIONS — AUTHENTIC COMIC PANELS */
+.tab-illustration {
+    width: 100%;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    border: 4px solid var(--comic-black);
+    box-shadow: var(--box-shadow-lg);
+    background: var(--comic-black);
+}
+.tab-illustration img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: center 30%;
+    display: block;
+}
+
+/* FORMS & INPUTS */
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.form-row{display:flex;gap:14px;flex-wrap:wrap;}
+.form-row>*{flex:1;min-width:180px;}
+label {
+    font-family: 'Bangers', Impact, sans-serif;
+    font-size: 1.05em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--comic-red);
+}
+input[type=text], input[type=number], select, textarea {
+    background: var(--comic-white);
+    color: var(--comic-black);
+    border: 2.5px solid var(--comic-black);
+    padding: 8px 10px;
+    border-radius: 5px;
+    font-family: inherit;
+    font-weight: 700;
+    width: 100%;
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+}
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    background: #FFFFF4;
+    border-color: var(--comic-red);
+    box-shadow: 3px 3px 0px var(--comic-black);
+}
+button {
+    background: var(--comic-white);
+    color: var(--comic-black);
+    border: 2.5px solid var(--comic-black);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Bangers', Impact, sans-serif;
+    font-size: 1.1em;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    box-shadow: var(--box-shadow-sm);
+    transition: all 0.1s ease;
+}
+button:hover {
+    background: var(--comic-yellow-light);
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px #111;
+}
+button:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px #111;
+}
+.btn-primary {
+    background: var(--comic-red) !important;
+    color: var(--comic-white) !important;
+    border: 2.5px solid var(--comic-black) !important;
+    text-shadow: 1px 1px 0 #000;
+}
+.btn-primary:hover {
+    background: var(--comic-red-dark) !important;
+}
+.btn-danger {
+    background: var(--comic-red) !important;
+    color: var(--comic-white) !important;
+    border: 2px solid var(--comic-black) !important;
+    padding: 3px 9px !important;
+    font-size: 0.9em !important;
+    box-shadow: 1.5px 1.5px 0px #111 !important;
+}
+.btn-danger:hover {
+    background: var(--comic-red-dark) !important;
+}
+
+/* STAT CARDS — COMIC HERO STAT PANELS */
+.grid-attrs {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 16px;
+}
+.stat-card {
+    background: var(--comic-white);
+    border: 3px solid var(--comic-black);
+    border-radius: 6px;
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 14px 0;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 6px 6px 0px #111;
+}
+.stat-card-header {
+    width: 100%;
+    background: var(--comic-yellow);
+    border-bottom: 2.5px solid var(--comic-black);
+    padding: 8px 6px;
+    text-align: center;
+}
+.stat-title {
+    font-family: 'Bangers', Impact, 'Arial Black', sans-serif;
+    font-size: 1.35em;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--comic-black);
+    line-height: 1;
+}
+.stat-sub {
+    font-size: .8em;
+    font-weight: 700;
+    color: #444;
+    margin-top: 2px;
+}
+.stat-input {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+}
+.stat-input input {
+    width: 65px;
+    text-align: center;
+    font-size: 1.4em;
+    font-family: 'Bangers', Impact, sans-serif;
+    color: var(--comic-red);
+}
+
+/* LIST ITEMS — COMIC PROFILE STRIPS */
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.list-item {
+    background: var(--comic-white);
+    border: 2.5px solid var(--comic-black);
+    padding: 10px 14px;
+    border-radius: 6px;
+    box-shadow: var(--box-shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    transition: border-color 0.15s ease;
+}
+.list-item:hover {
+    border-color: var(--comic-red);
+}
+.flex-1 { flex: 1; }
+
+/* POWER CARDS — COMIC PROFILE BOXES */
+.power-card {
+    background: var(--comic-white);
+    border: 3px solid var(--comic-black);
+    border-radius: 6px;
+    box-shadow: var(--box-shadow);
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+.power-cost {
+    font-family: 'Bangers', Impact, sans-serif;
+    font-size: 1.25em;
+    letter-spacing: 1px;
+    color: var(--comic-red);
+    background: var(--comic-yellow);
+    border: 2px solid var(--comic-black);
+    padding: 2px 10px;
+    border-radius: 4px;
+    box-shadow: 2px 2px 0px #111;
+}
+.mod-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: #FDFBF0;
+    border: 1.5px solid var(--comic-black);
+    margin-bottom: 4px;
+    border-radius: 4px;
+}
+.en { font-size: .83em; font-style: italic; color: #666; }
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: .8em;
+    font-weight: 700;
+    background: var(--comic-yellow);
+    color: var(--comic-black);
+    border: 1.5px solid var(--comic-black);
+}
+
+/* HELP DRAWER — CLASSIFIED COMIC DOSSIER */
+.help-drawer {
+    position: fixed;
+    right: -520px;
+    top: 0;
+    width: 480px;
+    max-width: 95vw;
+    height: 100vh;
+    background: #FFFDF5;
+    border-left: 4px solid var(--comic-black);
+    box-shadow: -8px 0 30px rgba(0,0,0,0.5);
+    z-index: 200;
+    transition: right .3s ease;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.help-drawer.open { right: 0; }
+.help-header {
+    background: var(--comic-red);
+    border-bottom: 3.5px solid var(--comic-black);
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.help-header h3 {
+    font-family: 'Bangers', Impact, sans-serif;
+    font-size: 1.5em;
+    letter-spacing: 2px;
+    color: var(--comic-yellow);
+    text-shadow: 1.5px 1.5px 0 #000;
+    margin: 0;
+}
+.help-close {
+    background: var(--comic-yellow);
+    border: 2px solid var(--comic-black);
+    color: var(--comic-black);
+    font-size: 1.1em;
+    cursor: pointer;
+    padding: 2px 8px;
+    border-radius: 4px;
+    box-shadow: 2px 2px 0 #000;
+}
+.help-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 18px 20px;
+}
+
+/* HELP ACCORDION */
+.help-section { margin-bottom: 10px; }
+.help-section-title {
+    background: var(--comic-yellow-light);
+    border: 2.5px solid var(--comic-black);
+    border-radius: 6px;
+    padding: 10px 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Bangers', Impact, sans-serif;
+    font-size: 1.15em;
+    letter-spacing: 1px;
+    color: var(--comic-black);
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.12);
+    transition: all .15s;
+}
+.help-section-title:hover {
+    background: var(--comic-yellow);
+    border-color: var(--comic-red);
+}
+.help-section-title .arrow { transition: .2s; color: var(--comic-black); }
+.help-section-title.open .arrow { transform: rotate(90deg); }
+.help-section-body {
+    display: none;
+    padding: 12px 14px;
+    border: 2.5px solid var(--comic-black);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    font-size: .95em;
+    color: var(--comic-black);
+    background: var(--comic-white);
+    line-height: 1.6;
+}
+.help-section-body.open { display: block; }
+.help-section-body p { margin-bottom: 8px; }
+.help-section-body ul { margin-left: 18px; margin-bottom: 8px; }
+.help-section-body li { margin-bottom: 5px; }
+
+.help-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: .78em;
+    font-weight: 700;
+    margin-right: 5px;
+    border: 1.5px solid var(--comic-black);
+}
+.tag-extra { background: var(--comic-yellow); color: var(--comic-black); }
+.tag-flaw { background: var(--comic-red); color: var(--comic-white); }
+.tag-cost { background: #E6E6FA; color: var(--comic-black); }
+
+/* FLOAT HELP BTN — COMIC POW BADGE */
+.float-help {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--comic-yellow);
+    color: var(--comic-black);
+    border: 3.5px solid var(--comic-black);
+    border-radius: 30px;
+    padding: 12px 22px;
+    font-family: 'Bangers', Impact, sans-serif;
+    font-size: 1.25em;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #111;
+    z-index: 100;
+    transition: transform .15s, box-shadow .15s;
+}
+.float-help:hover {
+    background: var(--comic-yellow-dark);
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 6px 6px 0px #111;
+}
+
+/* PRINT STYLES */
+@media print {
+    body { background: white !important; color: black !important; font-size: 12px; }
+    .sidebar, .float-help, .help-drawer, .mobile-topbar, .mobile-sidebar-overlay, .comic-main-banner { display: none !important; }
+    .app-layout { display: block !important; }
+    .main-content { padding: 0 !important; max-width: 100% !important; }
+    .header-btns, .tabs, #archetypeSelect, button { display: none !important; }
+    .tab-content { display: none !important; }
+    #tab-ficha { display: block !important; margin-bottom: 20px; }
+    .print-section { break-inside: avoid; margin-bottom: 16px; }
+    .stat-card, .power-card, .list-item { background: transparent !important; border: 1px solid #999 !important; break-inside: avoid; box-shadow: none !important; }
+    input[type=text], input[type=number] { border: none !important; background: transparent !important; padding: 0 !important; }
+    select { border: none !important; background: transparent !important; appearance: none !important; }
+    * { color: black !important; -webkit-print-color-adjust: exact; }
+    .grid-attrs { grid-template-columns: repeat(4, 1fr) !important; }
+    #print-header { display: block !important; }
+}
+
+#print-header { display: none; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .mobile-topbar { display: flex; }
+    .sidebar { position: fixed; left: 0; top: 0; height: 100vh; transform: translateX(-100%); transition: transform .3s ease; z-index: 45; width: 290px; }
+    .main-content { padding: 14px; }
+    .header-controls { flex-direction: column; }
+    .help-drawer { width: 100vw; right: -100vw; }
+    .float-help { bottom: 16px; right: 16px; padding: 10px 18px; font-size: 1.05em; }
+    .grid-attrs { grid-template-columns: repeat(2, 1fr); }
+    .power-header { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 480px) {
+    .grid-attrs { grid-template-columns: 1fr 1fr; }
+    .tabs { gap: 2px; }
+    .tab { padding: 6px 10px; font-size: 0.95em; }
+}
+</style>
+</head>
+<body>
+
+<!-- MOBILE TOP BAR -->
+<div class="mobile-topbar">
+    <button class="burger" onclick="toggleSidebar()">☰ HUD</button>
+    <strong style="color:var(--comic-red);font-family:'Bangers',Impact,sans-serif;font-size:1.3em;letter-spacing:1px;text-shadow:1px 1px 0 #000;">M&M 3E</strong>
+    <button class="btn-primary" onclick="window.print()" style="font-size:.9em;padding:5px 14px;">🖨 PDF</button>
+</div>
+<div class="mobile-sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<div class="app-layout">
+<!-- ========== SIDEBAR ========== -->
+<aside class="sidebar" id="mainSidebar">
+    <div class="sidebar-header">
+        <h2>MUTANTES &amp; MALFEITORES</h2>
+        <div style="font-family:'Bangers',Impact,sans-serif;color:var(--comic-white);letter-spacing:2px;font-size:0.95em;margin-top:2px;">★ 3ª EDIÇÃO DELUXE ★</div>
+    </div>
+    <div class="hud-card" style="text-align:center;">
+        <div class="hud-title"><span>Nível de Poder (NP)</span><span style="font-size:0.8em;color:var(--comic-black);">⚡ CD 1-20</span></div>
+        <input type="number" id="hudNp" min="1" max="20" value="10" style="width:85px;text-align:center;font-size:1.6em;font-family:'Bangers',Impact,sans-serif;color:var(--comic-red);margin:0 auto;display:block;" onchange="updateState('np',parseInt(this.value));renderAll();">
+    </div>
+    <div class="hud-card">
+        <div class="hud-title">Pontos Gastos</div>
+        <div class="points-big" id="ptTotal">0 / 150</div>
+        <div class="pts-grid">
+            <div>Atributos: <b id="ptA" style="color:var(--comic-red)">0</b></div><div>Defesas: <b id="ptD" style="color:var(--comic-red)">0</b></div>
+            <div>Perícias: <b id="ptS" style="color:var(--comic-red)">0</b></div><div>Vantagens: <b id="ptV" style="color:var(--comic-red)">0</b></div>
+            <div style="grid-column:1/-1;border-top:1.5px dashed #ccc;padding-top:4px;margin-top:2px;">Poderes: <b id="ptP" style="color:var(--comic-red)">0</b></div>
+        </div>
+    </div>
+    <div class="hud-card">
+        <div class="hud-title">Limites de Combate</div>
+        <div id="hudLimits" style="gap:0;"></div>
+        <p style="font-size:.78em;color:#555;margin-top:8px;line-height:1.3;font-weight:700;">★ Regra de Ouro: Esquiva+Resist, Aparar+Resist e Vontade+Fort &le; NP×2. Perícias máx. NP+10.</p>
+    </div>
+    <div class="hud-card">
+        <div class="hud-title">Físico &amp; Carga</div>
+        <div class="pts-grid" style="grid-template-columns:1fr;gap:6px;">
+            <div>Iniciativa: <b id="hudInit" style="color:var(--comic-red);font-size:1.15em;">+0</b></div>
+            <div>Carga Máxima: <b id="hudCarry" style="color:var(--comic-black);">25 kg</b></div>
+            <div>Velocidade: <b id="hudSpeed" style="color:var(--comic-black);">9 m/turno</b></div>
+        </div>
+    </div>
+</aside>
+
+<!-- ========== MAIN ========== -->
+<main class="main-content">
+
+<!-- HERO BANNER -->
+<div class="comic-main-banner">
+  <img src="mm3e_banner.jpg" alt="Mutantes & Malfeitores Heróis">
+  <div class="comic-banner-badge">★ FICHA INTERATIVA 3E ★</div>
+</div>
+
+<!-- PRINT HEADER -->
+<div id="print-header" style="margin-bottom:14px;">
+    <h1 id="ph-name" style="font-size:1.8em;font-family:'Bangers',Impact,sans-serif;letter-spacing:2px;"></h1>
+    <div style="display:flex;gap:30px;font-size:.95em;margin-top:4px;font-weight:bold;">
+        <span>Identidade: <b id="ph-id"></b></span>
+        <span>Jogador: <b id="ph-pl"></b></span>
+        <span>NP: <b id="ph-np"></b> &nbsp;|&nbsp; Pontos: <b id="ph-pts"></b></span>
+    </div>
+</div>
+
+<div class="header-controls">
+    <div class="form-row" style="flex:1;">
+        <div class="form-group">
+            <label>Nome do Personagem</label>
+            <input type="text" id="charName" placeholder="Ex: Homem-Aranha, Invencível, etc." oninput="updateState('characterName',this.value);syncPrintHeader();">
+        </div>
+        <div class="form-group">
+            <label>Arquétipos &amp; Templates (NP 10)</label>
+            <select id="archetypeSelect" onchange="loadArchetype(this.value)">
+                <option value="">-- Criar do Zero --</option>
+                <optgroup label='── Invencível ──'>
+                    <option value="invincible">Invencível (Mark Grayson)</option>
+                    <option value="omniman">Omni-Man (Nolan Grayson)</option>
+                    <option value="atomeve">Atom Eve (Samantha Wilkins)</option>
+                    <option value="rexsplode">Rex Splode</option>
+                    <option value="duplikate">Dupli-Kate</option>
+                    <option value="robot">Robot (Rudy)</option>
+                    <option value="techjacket">Tech Jacket</option>
+                </optgroup>
+                <optgroup label='── Invencível (Extras) ──'>
+                  <option value='monster_girl'>Monster Girl</option>
+                  <option value='black_samson'>Black Samson</option>
+                  <option value='bulletproof'>Bulletproof</option>
+                  <option value='battle_beast'>Battle Beast</option>
+                  <option value='thragg'>Thragg (Vilão)</option>
+                  <option value='conquest'>Conquest (Vilão)</option>
+                  <option value='cecil'>Cecil Stedman</option>
+                  <option value='darkwing'>Darkwing II</option>
+                  <option value='shrinking_rae'>Shrinking Rae</option>
+                  <option value='mauler_twin'>Mauler Twin</option>
+                </optgroup>
+                <optgroup label='── Marvel ──'>
+                  <option value='spider_man'>Homem-Aranha</option>
+                  <option value='iron_man'>Homem de Ferro</option>
+                  <option value='captain_america'>Capitão América</option>
+                  <option value='thor'>Thor</option>
+                  <option value='hulk'>Hulk</option>
+                  <option value='wolverine'>Wolverine</option>
+                  <option value='storm'>Tempestade</option>
+                  <option value='cyclops'>Ciclope</option>
+                  <option value='magneto'>Magneto (Vilão)</option>
+                  <option value='doctor_strange'>Doutor Estranho</option>
+                  <option value='deadpool'>Deadpool</option>
+                  <option value='black_panther'>Pantera Negra</option>
+                </optgroup>
+                <optgroup label='── DC ──'>
+                  <option value='superman'>Superman</option>
+                  <option value='batman'>Batman</option>
+                  <option value='wonder_woman'>Mulher-Maravilha</option>
+                  <option value='the_flash'>The Flash</option>
+                  <option value='green_lantern'>Lanterna Verde</option>
+                  <option value='aquaman'>Aquaman</option>
+                  <option value='cyborg'>Ciborgue</option>
+                  <option value='green_arrow'>Arqueiro Verde</option>
+                  <option value='zatanna'>Zatanna</option>
+                </optgroup>
+            </select>
+        </div>
+    </div>
+    <div class="header-btns">
+        <button style="background:var(--comic-yellow);" onclick="exportJSON()">💾 Salvar</button>
+        <button onclick="document.getElementById('importFile').click()">📂 Carregar</button>
+        <input type="file" id="importFile" style="display:none" onchange="importJSON(event)">
+        <button class="btn-primary" onclick="window.print()">🖨 Imprimir PDF</button>
+    </div>
+</div>
+
+<div class="tabs">
+    <button class="tab active" onclick="switchTab('tab-base',this)">📁 Base</button>
+    <button class="tab" onclick="switchTab('tab-attr',this)">⚡ Atributos</button>
+    <button class="tab" onclick="switchTab('tab-def',this)">🛡 Defesas</button>
+    <button class="tab" onclick="switchTab('tab-skills',this)">🥋 Perícias</button>
+    <button class="tab" onclick="switchTab('tab-adv',this)">💥 Vantagens</button>
+    <button class="tab" onclick="switchTab('tab-powers',this)">✨ Poderes</button>
+    <button class="tab" onclick="switchTab('tab-ficha',this)">📋 Ver Ficha</button>
+</div>
+
+<!-- TAB BASE -->
+<div id="tab-base" class="tab-content active print-section">
+    <div class='tab-illustration'><img src='mm3e_base.jpg' alt='Dossiê e Identidade Secreta'></div>
+    <div class="print-section-title" style="display:none;">Base & Complicações</div>
+    <div class="form-row">
+        <div class="form-group"><label>Identidade Secreta</label><input type="text" id="charIdentity" oninput="updateState('identity',this.value);syncPrintHeader();"></div>
+        <div class="form-group"><label>Jogador</label><input type="text" id="charPlayer" oninput="updateState('player',this.value);syncPrintHeader();"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:20px 0 12px;border-bottom:3px solid var(--comic-black);padding-bottom:6px;">
+        <h3 style="font-family:'Bangers',Impact,sans-serif;font-size:1.4em;letter-spacing:1px;color:var(--comic-red);margin:0;">Complicações <span class="en">Complications</span></h3>
+        <button onclick="addComplication()">+ Adicionar Complicação</button>
+    </div>
+    <div id="complications-list" class="list-container"></div>
+</div>
+
+<!-- TAB ATRIBUTOS -->
+<div id="tab-attr" class="tab-content print-section">
+    <div class='tab-illustration'><img src='mm3e_attr.jpg' alt='Atributos Sobre-Humanos'></div>
+    <div class="print-section-title" style="display:none;">Atributos</div>
+    <div class="grid-attrs" id="attributes-grid"></div>
+</div>
+
+<!-- TAB DEFESAS -->
+<div id="tab-def" class="tab-content print-section">
+    <div class='tab-illustration'><img src='mm3e_defenses.jpg' alt='Defesas & Escudo'></div>
+    <div class="print-section-title" style="display:none;">Defesas</div>
+    <div class="grid-attrs" id="defenses-grid"></div>
+</div>
+
+<!-- TAB PERICIAS -->
+<div id="tab-skills" class="tab-content print-section">
+    <div class='tab-illustration'><img src='mm3e_skills.jpg' alt='Perícias & Acrobacias'></div>
+    <div class="print-section-title" style="display:none;">Perícias</div>
+    <button onclick="addCustomSkill()" style="margin-bottom:14px;background:var(--comic-yellow);">+ Adicionar Especialidade / Combate</button>
+    <div id="skills-list" class="list-container"></div>
+</div>
+
+<!-- TAB VANTAGENS -->
+<div id="tab-adv" class="tab-content print-section">
+    <div class='tab-illustration'><img src='mm3e_adv.jpg' alt='Vantagens & Combate'></div>
+    <div class="print-section-title" style="display:none;">Vantagens</div>
+    <div style="display:flex;gap:10px;margin-bottom:16px;">
+        <select id="advSelect"></select>
+        <button class="btn-primary" onclick="addAdvantage()">+ Adicionar</button>
+    </div>
+    <div id="advantages-list" class="list-container"></div>
+</div>
+
+<!-- TAB PODERES -->
+<div id="tab-powers" class="tab-content print-section">
+    <div class='tab-illustration'><img src='mm3e_powers.jpg' alt='Poderes Sobrenaturais'></div>
+    <div class="print-section-title" style="display:none;">Poderes</div>
+    <div style="display:flex;gap:10px;margin-bottom:18px;">
+        <select id="powSelect"></select>
+        <button class="btn-primary" onclick="addPower()">+ Adicionar Poder</button>
+    </div>
+    <div id="powers-list"></div>
+</div>
+
+<!-- TAB FICHA -->
+<div id='tab-ficha' class='tab-content'>
+    <div class='tab-illustration' style='max-height:250px;'><img src='mm3e_ficha.jpg' alt='Capa Oficial do Personagem' style='height:250px;object-position:center 20%;'></div>
+    <div id='ficha-view'></div>
+</div>
+
+</main>
+</div><!-- end app-layout -->
+
+<!-- FLOAT HELP BTN -->
+<button class="float-help" onclick="toggleHelp()">📖 Regras da Aba</button>
+
+<!-- HELP DRAWER -->
+<aside class="help-drawer" id="helpDrawer">
+    <div class="help-header">
+        <h3 id="helpTitle">Regras</h3>
+        <button class="help-close" onclick="toggleHelp()">✖</button>
+    </div>
+    <div class="help-body" id="helpBody"></div>
+</aside>
+
+<script>
+/* ===== HELP DATA ===== */
+const helpSections = {
+'tab-base': {
+    title:'Base & Complicações',
+    items:[
+        { label:'O que é o Nível de Poder (NP)?', body:`<p>O NP define o poder total da campanha. Ele determina: seu <b>orçamento de pontos</b> (NP × 15 pontos), os <b>limites máximos</b> de ataque e defesa, e o teto de perícias (NP + 10).</p><p>NP 1-4 = heróis de rua. NP 6-9 = heróis locais. NP 10 = herói padrão de HQ. NP 15+ = nível cósmico.</p>` },
+        { label:'Complicações — por que usar?', body:`<p>Complicações não dão pontos na criação. Durante o jogo, quando sua complicação te prejudica (o inimigo descobre sua identidade secreta, um ente querido é sequestrado), o Mestre te recompensa com <b>Pontos Heróicos</b>.</p>` },
+        { label:'Pontos Heróicos — o que fazem?', body:`<ul><li>Rerrolar qualquer dado 1x por cena</li><li>Recuperar-se de condições de dano mais rápido</li><li>Ganhar um aumento temporário em uma perícia (Proeza)</li><li>Ignorar fadiga por uma rodada</li><li>Usar o poder "Proeza" para inventar uma habilidade de situação</li></ul>` },
+        { label:'Tipos comuns de complicações', body:`<ul><li><b>Motivação:</b> O herói age segundo um código (honra, vingança, proteção).</li><li><b>Identidade Secreta:</b> Proteger a vida civil gera conflitos.</li><li><b>Inimigo:</b> Um vilão específico persegue o herói.</li><li><b>Fobia / Fraqueza:</b> Kryptonita, fogo, magia.</li><li><b>Responsabilidade:</b> Família, cidade, organização.</li></ul>` },
+    ]
+},
+'tab-attr': {
+    title:'Atributos — Guia Completo',
+    items:[
+        { label:'Como funcionam (custo e escala)', body:`<p>Custo: <b>2 pts por rank</b>. Média humana = 0. Treinado = 2-3. Atleta olímpico = 4-5. Humano máximo = 7. Acima disso = super-humano.</p><p><b>Valores negativos</b> são possíveis (ex: -2 Presença = herói antissocial). Cada rank negativo devolve 2 pontos, mas impõe penalidades severas nos testes.</p>` },
+        { label:'⚡ Força (STR)', body:`<p>Determina o <b>dano desarmado</b> (=Força no teste de resistência do alvo) e a <b>carga</b> que você carrega.</p><ul><li>STR 0: 25 kg</li><li>STR 5: 800 kg</li><li>STR 10: 25 toneladas</li><li>STR 15: 800 toneladas (escala cósmica)</li></ul><p>Cada +1 de Força dobra a carga máxima.</p>` },
+        { label:'💪 Vigor (STA)', body:`<p>Base da sua <b>Resistência</b> e <b>Fortitude</b>. Personagens com Vigor alto aguentam mais pancada e resistem a venenos/doenças. Heróis como Invencível têm STA 10+.</p><p>Um Vigor negativo indica fragilidade extrema — robôs sem biologia costumam ter STA 0 ou "imunidade" no lugar.</p>` },
+        { label:'🏃 Agilidade (AGL)', body:`<p>Define a <b>Iniciativa</b> (AGL + bônus de Vantagens) e é a base de <b>Esquiva</b>. Também usada para Acrobacia e Furtividade.</p><p>Um personagem ágil pode ter Esquiva altíssima mesmo com pouca Resistência — um velocista de vidro.</p>` },
+        { label:'🎯 Destreza (DEX)', body:`<p>Pontaria e coordenação fina. Base para ataques <b>à distância</b> (sem usar Perícia de Combate), para pilotar e para Prestidigitação. Atiradores investem muito aqui.</p>` },
+        { label:'🥊 Luta (FGT)', body:`<p>Maestria em combate corpo-a-corpo. Base da defesa de <b>Aparar</b> e do bônus de ataque melee. Batman tem FGT ~10, Invencível tem FGT 8 (depende mais da força bruta).</p>` },
+        { label:'🧠 Intelecto (INT)', body:`<p>Raciocínio, memória e conhecimento técnico. Base de Investigação, Tecnologia, Tratamento e Especialidades científicas. O Robot (Rudy) tem INT 10+.</p>` },
+        { label:'👁 Prontidão (AWE)', body:`<p>Percepção aguçada e intuição. Base de <b>Vontade</b> (defesa mental) e Percepção. Heróis como Atom Eve (AWE 4) usam isso para manter a mente forte contra controle.</p>` },
+        { label:'✨ Presença (PRE)', body:`<p>Carisma, intimidação e força de palco. Base de Persuasão, Intimidação e Enganação. Um vilão com PRE 6+ paralisa multidões só de aparecer.</p>` },
+    ]
+},
+'tab-def': {
+    title:'Defesas — Guia Completo',
+    items:[
+        { label:'Como o dano funciona (sem PV!)', body:`<p>M&M não usa pontos de vida. Quando você é atacado:<br>1. O inimigo rola 1d20 + bônus de ataque contra a sua <b>Defesa Ativa</b> (Esquiva ou Aparar).<br>2. Se acertar, você rola 1d20 + <b>Resistência</b> contra o valor de dano dele.<br>3. Se falhar: recebe um <b>Ferimento</b> (−1 cumulativo em futuros testes de Resistência). Se falhar muito: Atordoado, Derrubado, ou Nocauteado.</p>` },
+        { label:'🛡 Esquiva (Dodge) — base AGL', body:`<p>Custo extra: <b>1 pt/rank</b>. Defesa contra ataques à distância, rajadas, explosões e áreas. Um speedster pode ter Esquiva 15+ graças à Agilidade altíssima.</p>` },
+        { label:'⚔ Aparar (Parry) — base FGT', body:`<p>Custo extra: <b>1 pt/rank</b>. Defesa contra ataques corpo-a-corpo, socos, espadas. Personagens de luta investem em FGT, o que já dá Aparar alto gratuitamente.</p>` },
+        { label:'🦠 Fortitude — base STA', body:`<p>Custo extra: <b>1 pt/rank</b>. Resiste a venenos, doenças, radiação, calor extremo e poderes biológicos (como Aflição que causa náusea). Robôs costumam ter Imunidade total a Fortitude no lugar de ranks aqui.</p>` },
+        { label:'🧿 Vontade (Will) — base AWE', body:`<p>Custo extra: <b>1 pt/rank</b>. Defesa da mente. Resiste a controle mental, ilusões, medo, ataques psíquicos. Um telepath sem Vontade é uma vítima fácil.</p>` },
+        { label:'💥 Resistência (Toughness) — base STA', body:`<p><b>Não pode ser comprada diretamente aqui.</b> Ela vem de:<br>• O rank de Vigor (STA) já é sua Resistência base<br>• Comprar o Poder <b>"Proteção"</b> (armadura, campo de força, pele de aço) soma ao total<br>• A Vantagem <b>"Defesa Superior"</b> (Defensive Roll) pode adicionar ranks situacionais</p>` },
+        { label:'📐 Limites matemáticos do NP', body:`<p>Para garantir equilíbrio, estas somas não podem ultrapassar <b>NP × 2</b>:</p><ul><li>Esquiva + Resistência</li><li>Aparar + Resistência</li><li>Vontade + Fortitude</li></ul><p>Isso permite dois arquétipos: o <b>vidro veloz</b> (Esquiva 18, Resistência 2) e o <b>tijolo imóvel</b> (Esquiva 2, Resistência 18). Ambos válidos!</p>` },
+    ]
+},
+'tab-skills': {
+    title:'Perícias — Guia Completo',
+    items:[
+        { label:'Custo e funcionamento geral', body:`<p><b>0,5 pt por rank</b> (1 ponto = 2 ranks). O bônus total é Atributo + Ranks. O máximo absoluto é <b>NP + 10</b>. Perícias de combate têm a restrição adicional de que Ataque + Efeito não podem superar NP × 2.</p>` },
+        { label:'🤸 Acrobacia (AGL)', body:`<p>Equilíbrio, cambalhotas, quedas controladas e piruetas. Usada para atravessar obstáculos, não cair em superfícies escorregadias e reduzir dano de quedas.</p>` },
+        { label:'🏋️ Atletismo (STR)', body:`<p>Natação, escalada, corrida e saltos não-assistidos. Difere de Voo ou Salto (que são Poderes) — aqui é o esforço físico puro do herói.</p>` },
+        { label:'🥋 Combate Cor-a-cor (FGT)', body:`<p>Especialização em um tipo de luta (Desarmado, Espada, Garras). Aumenta a precisão desse ataque específico sem elevar o custo de comprar Luta geral. Essencial para heróis de combate melee que precisam de bônus de ataque sem gastar 2pts em FGT.</p>` },
+        { label:'🎭 Enganação (PRE)', body:`<p>Mentiras, disfarces verbais, fingir ferimentos e iludir em combate (finta).</p>` },
+        { label:'📚 Especialidade (INT)', body:`<p>Conhecimento profissional específico: Medicina, Direito, Biologia, Cultura de rua, etc. Funciona como "lore" — o Mestre pede testes quando a informação não seria óbvia.</p>` },
+        { label:'🔍 Intuição (AWE)', body:`<p>Sentir quando algo está errado, detectar mentalidade e estados emocionais, resistir a manobras de Enganação. O "detector de mentiras" social do personagem.</p>` },
+        { label:'💢 Intimidação (PRE)', body:`<p>Ameaças, presença aterrorizante, e coagir NPCs a cooperar. Também pode causar a condição "Assustado" em combate como ação padrão contra alvos mais fracos.</p>` },
+        { label:'🔎 Investigação (INT)', body:`<p>Coletar pistas, analisar cenas de crime, deduzir conexões. O Batman usa isso com bônus astronômicos.</p>` },
+        { label:'👀 Percepção (AWE)', body:`<p>Ver, ouvir, sentir, cheirar e notar detalhes escondidos. Uma das perícias mais importantes de jogo — é testada constantemente pelo Mestre.</p>` },
+        { label:'🗣 Persuasão (PRE)', body:`<p>Convencer, negociar, inspirar e seduzir via diálogo honesto (diferente de Enganação). Líderes e personagens carismáticos investem aqui.</p>` },
+        { label:'🏹 Combate à Distância (DEX)', body:`<p>Especialização em armas de fogo, arcos, poderes de rajada etc. Assim como Combate Cor-a-cor, permite comprar precisão de ataque para ataques de longa distância sem elevar DEX geral.</p>` },
+        { label:'🃏 Prestidigitação (DEX)', body:`<p>Truques de mão, pickpocketing, esconder objetos no corpo e movimentos sutis com as mãos.</p>` },
+        { label:'👤 Furtividade (AGL)', body:`<p>Mover-se sem ser notado, permanecer escondido e evitar sensores visuais. Testada contra a Percepção dos observadores.</p>` },
+        { label:'🔧 Tecnologia (INT)', body:`<p>Construir, reparar, hackear e usar dispositivos tecnológicos. O Robot tem isso maximizado. Pode ser usada para criar equipamentos improvisados em cena.</p>` },
+        { label:'🩺 Tratamento (INT)', body:`<p>Primeiros socorros, cirurgia e recuperação de condições físicas. Em M&M, pode remover condições de ferimento em aliados fora de combate.</p>` },
+        { label:'🚗 Veículos (DEX)', body:`<p>Pilotagem de carros, motos, aeronaves, barcos. Testada em perseguições, manobras perigosas e pouso de emergência.</p>` },
+    ]
+},
+'tab-adv': {
+    title:'Vantagens — Guia Completo',
+    items:[
+        { label:'Custo e funcionamento geral', body:`<p><b>1 pt por rank</b>. Vantagens são truques, estilos táticos ou habilidades que ainda operam dentro do possível do mundo. Não são considerados poderes sobrenaturais — são maestria, treinamento ou dons menores.</p>` },
+        { label:'🎯 Ataque Acurado', body:`<p>Permite trocar bônus de Efeito de Dano por precisão de Ataque, até −5/+5. Útil para personagens ágeis que preferem acertar sempre com dano menor.</p>` },
+        { label:'💥 Ataque Poderoso', body:`<p>Permite trocar bônus de Ataque por mais Efeito de Dano, até −5/+5. O herói bate menos vezes, mas quando acerta, destrói. Clássico para personagens de força bruta.</p>` },
+        { label:'🛡 Ataque Defensivo', body:`<p>Permite sacrificar bônus de Ataque por mais Esquiva/Aparar temporariamente. Ótimo para heróis que precisam sobreviver enquanto aguardam reforços.</p>` },
+        { label:'⚡ Ataque Imprudente', body:`<p>Sacrifica Esquiva/Aparar por mais bônus de Ataque. Alto risco, alta recompensa — o herói fica vulnerável mas golpeia com força avassaladora.</p>` },
+        { label:'⚡ Iniciativa Aprimorada', body:`<p>+4 na Iniciativa por rank. Em um sistema onde agir primeiro pode determinar o combate, isso é crucial para heróis táticos.</p>` },
+        { label:'🎲 Sorte (Luck)', body:`<p>Cada rank dá uma rerrolagem por sessão de jogo, funcionando de forma similar a um Ponto Heróico reserva. Incrivelmente útil para heróis sem poderes defensivos.</p>` },
+        { label:'📦 Equipamento (Equipment)', body:`<p>Cada rank vale <b>5 Pontos de Equipamento</b>. Esses pontos compram armas, armaduras, veículos e instalações mundanas (que podem ser confiscadas ou destruídas). Diferente de Dispositivos-Poder que são tecnologia única do herói.</p>` },
+        { label:'🏃 Ação em Movimento', body:`<p>Permite fazer uma manobra de movimento padrão enquanto realiza outra ação. Heróis velozes ou de luta ativa precisam muito disso.</p>` },
+        { label:'👁 Esquiva Fabulosa', body:`<p>O herói não é surpreendido, mesmo adormecido ou distraído. Instinto puro de sobrevivência — Batman e sensores aguçados típicos.</p>` },
+        { label:'🔁 Derrubar (Takedown)', body:`<p>Ao nocautear um alvo, pode imediatamente atacar outro adjacente. Devastador contra grupos de capangas fracos (perfeito para Omni-Man e Invencível).</p>` },
+        { label:'🧠 Avaliação (Assessment)', body:`<p>Ação padrão: analisar um oponente para descobrir seus valores de ataque e defesa antes de lutar. Enormemente útil para personalizar a estratégia.</p>` },
+        { label:'🌀 Evasão', body:`<p>Rank 1: −1 no Grau de Falha em ataques de Área. Rank 2: nunca sofre dano em ataques de Área se rolar bem. Essencial para personagens ágeis contra explosões.</p>` },
+        { label:'🗡 Crítico Aprimorado', body:`<p>Reduz a faixa de acerto crítico (normalmente 20) em 1 por rank. Com 4 ranks, você crita em 16-20! Acertos críticos dobram o Grau de Sucesso do ataque.</p>` },
+        { label:'🤜 Agarrar Rápido', body:`<p>Permite fazer um agarrão como ação livre após um soco bem-sucedido. Perfeito para personagens de luta que querem prender e machucar simultaneamente.</p>` },
+        { label:'🦸 Interpor-se (Interpose)', body:`<p>Permite sofrer o dano no lugar de um aliado adjacente — uma vez por rodada. A vantagem do escudo vivo e do herói protetor.</p>` },
+        { label:'💪 Memória Eidética', body:`<p>O personagem lembra perfeitamente de tudo que já viu, leu ou ouviu. Sem necessidade de testes de Intelecto para lembrar informações já adquiridas.</p>` },
+        { label:'🌟 Esforço Extraordinário', body:`<p>Permite gastar Esforço por efeitos mais poderosos (dobrar velocidade, tentar Herculean feats). Mas cada uso causa um nível de fadiga acumulada.</p>` },
+    ]
+},
+'tab-powers': {
+    title:'Poderes — Guia Completo',
+    items:[
+        { label:'A filosofia dos Efeitos', body:`<p>M&M não tem uma lista de poderes prontos. Você constrói seu poder a partir de <b>Efeitos</b> mecânicos. "Visão Laser", "Punho de Gelo" e "Rajada de Energia" são todos o Efeito <b>Dano</b> com o Extra <b>À Distância</b> — a diferença é apenas o Descritor (temático).</p>` },
+        { label:'📐 A fórmula de custo', body:`<p><b>Custo = Ranks × (Custo Base + Extras - Falhas)</b></p><p>Exemplo: Dano (1pt base) + À Distância (+1pt) = 2 pts por rank. 10 ranks = 20 pts no total.</p><p>O custo mínimo por rank é sempre 1pt, mesmo com muitas Falhas. Se o total de modificadores for negativo, a fórmula muda para divisão fracionária.</p>` },
+        { label:'⚡ Efeito: Dano (1pt/rank)', body:`<p>O efeito mais versátil. Representa qualquer ataque físico ou energético. Por padrão é corpo-a-corpo (Close). Adicione <b>À Distância</b> para ataques de longa distância ou <b>Área</b> para explosões.</p><p>Rank = Grau de dano imposto. Em combate, o alvo rola Resistência contra este valor.</p>` },
+        { label:'💫 Efeito: Aflição (1pt/rank)', body:`<p>Ataque que impõe condições progressivas em 3 graus (você define). Ex: 1° Atordoado, 2° Compelido, 3° Dominado. Resistido por Fortitude, Vontade ou Esquiva conforme o efeito.</p><p>Usado para controle mental, paralisantes, gás, sedativos etc.</p>` },
+        { label:'🛡 Efeito: Proteção (1pt/rank)', body:`<p>Adiciona ranks de Resistência. Modela armaduras, campos de força, pele de aço, escamas dracônicas. Com o Extra <b>Impenetrável</b>, ignora Penetrante.</p><p>A maioria dos "tanques" tem Proteção 8-12.</p>` },
+        { label:'✈ Efeito: Voo (2pts/rank)', body:`<p>Cada rank dobra a velocidade de voo. Rank 1 = ~3 m/turno. Rank 6 = 100 km/h. Rank 12 = velocidade de escape. Não inclui suporte de vida — adicione Imunidade separado para o espaço.</p>` },
+        { label:'⚕ Efeito: Cura (2pts/rank)', body:`<p>Remove ferimentos de um alvo. Por padrão funciona apenas em outros (não em si). Para uso pessoal adicione o Extra <b>Pessoal</b>. Resistido (limitado) — curar muito rápido exige ranks altos.</p>` },
+        { label:'🏥 Efeito: Regeneração (1pt/rank)', body:`<p>O personagem se recupera de ferimentos automaticamente por turno. Rank = número de ferimentos recuperados por rodada. Wolverine clássico teria Regeneração 5+.</p>` },
+        { label:'🌊 Efeito: Imunidade (1pt/rank)', body:`<p>Imunidade total a uma categoria de dano ou efeito (Life Support = 10 ranks, cobre vácuo/radiação/venenos). Robôs geralmente têm Imunidade a Fortitude (10 ranks) em vez de comprar Fortitude normal.</p>` },
+        { label:'👁 Efeito: Sentidos (1pt cada)', body:`<p>Cada rank compra um "poder" sensorial: Visão no Escuro, Sentido de Aranha, Radar, Sentido de Perigo, Infravermelho, etc. Não tem ranks — você compra quantos sentidos quiser a 1pt cada.</p>` },
+        { label:'🔮 Efeito: Teleporte (2pts/rank)', body:`<p>Deslocamento instantâneo. Cada rank dobra a distância. Rank 5 = teleporte pelo bairro. Rank 10 = continental. Rank 15 = extragaláctico.</p>` },
+        { label:'🌿 Efeito: Criar (2pts/rank)', body:`<p>Cria objetos ou estruturas de matéria (campos de força, cristal, luz sólida, areia). Rank = resistência/volume dos objetos criados. Atom Eve usa isso para transmutação.</p>` },
+        { label:'🎭 Efeito: Ilusão (1pt/rank)', body:`<p>Cria ilusões sensoriais. Por padrão afeta apenas um sentido (rank de alcance limita a cobertura). Para ilusões totais adicione mais sentidos como Extras.</p>` },
+        { label:'🌀 Efeito: Nulificar (1pt/rank)', body:`<p>Suprime temporariamente um tipo específico de poder no alvo. Rank do alvo vs. rank do Nulificar determinam o sucesso. Modela Inibidores de poder, magia supressora, EMP etc.</p>` },
+        { label:'🧲 Efeito: Mover Objetos (2pts/rank)', body:`<p>Telecinese, magnetismo, gravidade — qualquer coisa que mova objetos à distância. Rank = nível de Força equivalente para fins de peso e dano com objetos arremessados.</p>` },
+        { label:'🧠 Efeito: Leitura Mental (2pts/rank)', body:`<p>Acessa pensamentos de um alvo. Resistido por Vontade. Rank = profundidade de leitura e alcance. Pode ser usado para comunicação telepática com Extras.</p>` },
+        { label:'🌀 Efeito: Variável (7pts/rank)', body:`<p>O efeito mais poderoso e caro. Cria uma <b>pool</b> de pontos que você distribui entre poderes livremente a cada cena. Modela adaptação, magia genérica, copiar poderes, etc. Muito regulado pelos Mestres.</p>` },
+        { label:'🏃 Efeito: Velocidade (1pt/rank)', body:`<p>Velocidade terrestre aumentada. Rank 1 = 15 km/h. Rank 6 = 400 km/h. Rank 10 = sub-orbital. Diferente de Voo, que é tridimensional.</p>` },
+        { label:'💀 Efeito: Enfraquecer (1pt/rank)', body:`<p>Reduz temporariamente ranks de um Atributo, Habilidade ou Poder do alvo. Resistido por Fortitude (físico) ou Vontade (mental). Devastador contra personagens de um único ponto forte.</p>` },
+        { label:'🔑 Extra: À Distância (+1pt/rank)', body:`<span class="help-tag tag-extra">Extra</span><p>Transforma um ataque corpo-a-corpo em à distância. Exige linha de visão. Adicione também <b>Percepção</b> (+2pt/rank) para torná-lo irresistível (sem teste de Defesa).</p>` },
+        { label:'💣 Extra: Área (+1pt/rank)', body:`<span class="help-tag tag-extra">Extra</span><p>O efeito afeta uma área, sem precisar acertar individualmente cada alvo. O raio cresce com o rank. Alvos na área ainda rolam Esquiva para reduzir o efeito pela metade.</p>` },
+        { label:'🔄 Extra: Contínuo (+1pt/rank)', body:`<span class="help-tag tag-extra">Extra</span><p>O efeito persiste sem precisar de ação para manter. Modela campos permanentes, armaduras sempre ativas, poderes passivos.</p>` },
+        { label:'🔁 Extra: Ataque Múltiplo (+1pt/rank)', body:`<span class="help-tag tag-extra">Extra</span><p>Permite atacar vários alvos em sequência com um único ataque. Cada alvo adicional reduz o bônus de ataque em 2.</p>` },
+        { label:'✦ Extra: Efeito Alternativo (+1pt flat)', body:`<span class="help-tag tag-extra">Extra</span><p>Cria um "modo alternativo" de um poder — você pode usar um OU outro, nunca os dois ao mesmo tempo. Ótima forma de baratear poderes temáticos relacionados. Custo fixo de 1pt independente dos ranks.</p>` },
+        { label:'🔕 Falha: Removível (-1 por 5pts)', body:`<span class="help-tag tag-flaw">Falha</span><p>Os poderes estão em um dispositivo que pode ser roubado, hackeado ou desarmado. Para cada 5pts do custo total do pacote de poderes, você desconta 1pt. Modela armaduras, anéis de poder, varinhas, etc.</p>` },
+        { label:'😴 Falha: Cansativo (-1pt/rank)', body:`<span class="help-tag tag-flaw">Falha</span><p>Cada uso do poder causa um nível de fadiga acumulada. Três níveis de fadiga = Incapacitado. Modela poderes de sobrecarga, magias consumidoras de energia vital.</p>` },
+        { label:'❌ Falha: Teste Exigido (-1pt flat)', body:`<span class="help-tag tag-flaw">Falha</span><p>Usar o poder exige um teste de habilidade antes de ativá-lo. Falhar no teste significa que o poder não funciona naquela rodada. Cria tensão narrativa interessante.</p>` },
+        { label:'👁 Falha: Dependente de Sentido (-1pt/rank)', body:`<span class="help-tag tag-flaw">Falha</span><p>O poder só funciona se o usuário puder ver/sentir o alvo. Bloquear o sentido correspondente desativa o poder completamente. Cegantes e fumaça se tornam ameaças reais.</p>` },
+        { label:'⚠️ Falha: Inconfiável (-1pt/rank)', body:`<span class="help-tag tag-flaw">Falha</span><p>Antes de cada uso, role 1d20. Em 11+, o poder funciona normalmente. Abaixo, falha. Modela poderes instáveis, mágica em desenvolvimento, tecnologia improvisada.</p>` },
+    ]
+},
+'tab-ficha': {
+    title:'Guia da Ficha Completa',
+    items:[
+        { label:'📋 Como usar esta visualização', body:`<p>Esta aba reúne todas as informações do seu herói em um formato direto, limpo e cinematográfico de revista em quadrinhos. É o painel perfeito para consultar durante uma batalha sem precisar trocar de aba!</p>` },
+        { label:'⚡ Estatísticas de Combate', body:`<p>Calculadas em tempo real:<br>• <b>Atq. Corpo</b>: Luta (FGT) + Combate Corpo-a-corpo<br>• <b>Atq. Dist.</b>: Destreza (DEX) + Combate à Distância<br>• <b>Defesas</b>: Esquiva, Aparar, Resistência, Fortitude e Vontade<br>• <b>Iniciativa</b>: Agilidade (AGL) + 4 por rank de Iniciativa Aprimorada</p>` },
+        { label:'🖨 Salvamento e Impressão', body:`<p>• <b>💾 Salvar</b>: Exporta um arquivo <code>.json</code> leve e seguro para o seu computador.<br>• <b>📂 Carregar</b>: Abre qualquer ficha salva anteriormente.<br>• <b>🖨 Imprimir PDF</b>: Imprime todas as seções formatadas perfeitamente para papel ou documento PDF.</p>` }
+    ]
+}
+};
+
+function buildHelp(tabId) {
+    const sec = helpSections[tabId];
+    if (!sec) return '<p style="color:var(--muted);">Selecione uma aba para ver as regras.</p>';
+    let html = '';
+    sec.items.forEach((item, i) => {
+        html += `<div class="help-section">
+            <div class="help-section-title" onclick="toggleAccordion(${i},'help-body-${i}',this)">
+                <span>${item.label}</span><span class="arrow">▶</span>
+            </div>
+            <div class="help-section-body" id="help-body-${i}">${item.body}</div>
+        </div>`;
+    });
+    return html;
+}
+
+function toggleAccordion(i, id, btn) {
+    const body = document.getElementById(id);
+    const isOpen = body.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.help-section-body').forEach(el => el.classList.remove('open'));
+    document.querySelectorAll('.help-section-title').forEach(el => el.classList.remove('open'));
+    if (!isOpen) {
+        body.classList.add('open');
+        btn.classList.add('open');
+    }
+}
+
+/* ===== POWER HELP DATA ===== */
+const powerHelpData = {
+    damage: {
+        icon: '💥', title: 'Dano (Damage)',
+        cost: '1 pt/rank',
+        desc: `O efeito de ataque mais versátil do sistema. Representa qualquer forma de agressão física ou energética — um soco, chamas, relâmpagos, explosões, ondas sônicas ou até força psíquica bruta. O <b>Descritor</b> (fogo, gelo, força, etc.) é apenas temático e não muda a mecânica base.`,
+        resistedBy: 'Resistência (Toughness)',
+        defaultRange: 'Cor-a-cor (precisa de À Distância para atacar de longe)',
+        rankScale: [
+            { rank: 2, note: 'Equivalente a um soco humano forte' },
+            { rank: 5, note: 'Capaz de dobrar aço, quebrar paredes finas' },
+            { rank: 8, note: 'Destrói veículos e estruturas de concreto' },
+            { rank: 10, note: 'Nível M&M padrão — ameaça a maioria dos heróis de NP 10' },
+            { rank: 14, note: 'Escala planetária — capaz de mover montanhas' }
+        ],
+        mods: {
+            ranged: 'Transforma o ataque em projétil ou rajada à distância. Essencial para poderes como raios, bolas de fogo ou balas mágicas.',
+            area: 'O dano afeta todos na área. Explosões, ondas de choque e tempestades de energia usam isso. Ótimo combinado com Dano alto.',
+            multiattack: 'O personagem pode acertar vários alvos em um único ataque (como metralhadora ou salva de projéteis). Cada alvo extra: -2 bônus de ataque.',
+            penetrating: 'Ignora completamente a Resistência Impenetrável do alvo — especialmente útil contra tijolos com proteção alta.',
+            accurate: 'O ataque é inerentemente mais preciso. Bom para heróis cujo poder é difícil de esquivar.',
+            tiring: 'Usar causa Fadiga. Ideal para poderes de "golpe especial" de altíssima potência que o herói usa com moderação.',
+            perception_range: 'Sem rolagem de ataque — acerta automaticamente quem o usuário vê. O alvo só pode tentar resistir com Resistência.'
+        }
+    },
+    affliction: {
+        icon: '🌀', title: 'Aflição (Affliction)',
+        cost: '1 pt/rank',
+        desc: `Impõe condições progressivas no alvo ao invés de dano direto. Você define <b>3 condições em escalada</b> (ex: 1° Atordoado → 2° Compelido → 3° Dominado). O alvo rola a defesa para ver em qual grau foi atingido. Muito versátil: modela paralisantes, venenos, controle mental, gás hipnótico, maldições etc.`,
+        resistedBy: 'Fortitude (físico), Vontade (mental) ou Esquiva (físico evasivo)',
+        defaultRange: 'Cor-a-cor',
+        rankScale: [
+            { rank: 3, note: 'CD modesta — alvos comuns falham com frequência' },
+            { rank: 7, note: 'Ameaça real mesmo para heróis com boa defesa' },
+            { rank: 10, note: 'Dificílimo de resistir. Paralisa ou domina a maioria dos personagens' }
+        ],
+        mods: {
+            ranged: 'Ataque de controle à distância — gás, magia ou toque psíquico.',
+            area: 'Nuvem de gás, onda de medo, campo de paralisação em área.',
+            selective: 'Com Área, permite escolher quem é afetado. Aliados ficam imunes.',
+            cumulative: 'Cada falha consecutiva piora o grau automaticamente. Poderoso e caro.',
+            perception_range: 'Ataque mental sem rolagem — toque psíquico ou maldição que simplesmente age sobre quem o usuário vê.'
+        }
+    },
+    protection: {
+        icon: '🛡', title: 'Proteção (Protection)',
+        cost: '1 pt/rank',
+        desc: `Aumenta diretamente a <b>Resistência (Toughness)</b> do personagem. Representa armaduras, pele de aço, escamas, campos de força, energia protetora ou qualquer barreira. É a forma mais econômica de aumentar a durabilidade de um herói.`,
+        resistedBy: 'N/A — é uma defesa passiva',
+        defaultRange: 'Pessoal (sempre ativo)',
+        rankScale: [
+            { rank: 3, note: 'Equivalente a um colete à prova de bala leve' },
+            { rank: 5, note: 'Armadura tática militar pesada' },
+            { rank: 8, note: 'Tanque de guerra — resiste a explosivos' },
+            { rank: 12, note: 'Impenetrável para a maioria dos ataques normais' }
+        ],
+        mods: {
+            impervious: 'Ataques com Dano abaixo da metade do rank de Proteção simplesmente não causam efeito. Heroísmo absurdo.',
+            removable: 'A proteção vem de uma armadura que pode ser removida, hackeada ou destruída.',
+            easily_removable: 'Colete/protetor leve — fácil de tirar em qualquer situação.',
+            sustained: 'Campo de força que precisa de concentração para manter ativo.',
+            continuous: 'Blindagem sempre ativa sem esforço — pele metálica, escamas naturais.'
+        }
+    },
+    flight: {
+        icon: '✈', title: 'Voo (Flight)',
+        cost: '2 pts/rank',
+        desc: `Deslocamento tridimensional pelo ar. Cada rank dobra a velocidade de voo. Por padrão não inclui proteção contra o ambiente (espaço, pressão, temperatura) — combine com Imunidade se necessário.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 1, note: '~3 m/turno (flutuar devagar)' },
+            { rank: 3, note: '~30 m/turno / 60 km/h' },
+            { rank: 6, note: '~250 m/turno / 500 km/h (avião de combate)' },
+            { rank: 10, note: '~4 km/turno / Mach 3+' },
+            { rank: 15, note: 'Velocidade de escape — viagem interplanetária' },
+            { rank: 20, note: 'Interestelar' }
+        ],
+        mods: {
+            removable: 'Asas mecânicas, mochila propulsora, dispositivo anti-gravidade.',
+            subtle: 'Voo invisível — sem rastro luminoso nem som de propulsores.',
+            continuous: 'O personagem flutua passivamente mesmo inconsciente.'
+        }
+    },
+    immunity: {
+        icon: '🛡', title: 'Imunidade (Immunity)',
+        cost: '1 pt por imunidade',
+        desc: `Garante imunidade total a uma categoria específica de dano ou efeito. <b>Não tem ranks progressivos</b> — você simplesmente compra quantas imunidades quiser ao custo de 1pt cada. Imunidades comuns já têm pacotes pré-definidos.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 1, note: '1 imunidade específica (ex: fogo, frio, veneno)' },
+            { rank: 5, note: 'Pacote: Venenos + Doenças + Pressão + Fome/Sede + Envelhecimento' },
+            { rank: 10, note: 'Suporte de Vida completo (espaço, vácuo, radiação, extremos de temperatura)' },
+            { rank: 10, note: 'Fortitude total: robôs e mortos-vivos não precisam de Fortitude' },
+            { rank: 80, note: 'Tudo (imunidade total a qualquer coisa — extremamente raro e caro)' }
+        ],
+        mods: {
+            removable: 'Vem de um aparelho/traje especial.',
+            limited: 'Imunidade parcial — reduz o efeito à metade em vez de eliminar.'
+        }
+    },
+    regeneration: {
+        icon: '💚', title: 'Regeneração (Regeneration)',
+        cost: '1 pt/rank',
+        desc: `O personagem se recupera automaticamente de ferimentos com o tempo. Cada rank representa <b>1 ferimento recuperado por rodada</b> de combate. Com ranks altos, o herói é praticamente impossível de derrubar permanentemente.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 1, note: '1 ferimento por rodada (lenta, mas constante)' },
+            { rank: 5, note: 'Recupera de 5 ferimentos por rodada — muito difícil de nocautear' },
+            { rank: 10, note: 'Wolverine clássico — membros regeneram em segundos' }
+        ],
+        mods: {
+            persistent: 'Funciona mesmo quando o personagem está morto/Incapacitado.',
+            tiring: 'Regeneração forçada — o corpo se cura mas a mente se esgota.'
+        }
+    },
+    healing: {
+        icon: '⚕', title: 'Cura (Healing)',
+        cost: '2 pts/rank',
+        desc: `Remove ferimentos de um alvo. Por padrão só funciona em <b>outros</b> (não em si mesmo). Para curar a si, adicione o Extra "Pessoal". Limitado: cada alvo só pode se beneficiar 1x por cena (evita spam de cura).`,
+        resistedBy: 'N/A',
+        defaultRange: 'Cor-a-cor (toque)',
+        rankScale: [
+            { rank: 1, note: 'Remove 1 ferimento — alívio básico' },
+            { rank: 5, note: 'Remove até 5 ferimentos — cura substancial em combate' },
+            { rank: 10, note: 'Cura completa instantânea de praticamente qualquer ferimento' }
+        ],
+        mods: {
+            ranged: 'Cura à distância — raio de luz, transferência de energia.',
+            area: 'Cura múltiplos aliados ao mesmo tempo — aura de regeneração.',
+            restorative: 'Também remove condições permanentes e handicaps.',
+            tiring: 'Canalizar energia vital para curar esgota o curandeiro.'
+        }
+    },
+    teleport: {
+        icon: '🌀', title: 'Teleporte (Teleport)',
+        cost: '2 pts/rank',
+        desc: `Deslocamento instantâneo de um ponto a outro. Cada rank dobra a distância máxima. Por padrão requer <b>linha de visão</b> ou conhecer o destino. Inclui automaticamente objetos/pessoas que o usuário carrega.`,
+        resistedBy: 'N/A (uso próprio) / Resistência se usado em alvo',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 2, note: '~30 metros — dentro de um prédio' },
+            { rank: 5, note: '~500 metros — pelo quarteirão' },
+            { rank: 8, note: '~8 km — cruzar a cidade' },
+            { rank: 12, note: 'Continental — qualquer ponto no planeta' },
+            { rank: 16, note: 'Interestelar' }
+        ],
+        mods: {
+            accurate: 'Teleporte de precisão — nunca aparece dentro de objetos sólidos.',
+            portal: 'Cria um portão que outros podem usar pelo turno.',
+            ranged: 'Teleporta alvos contra a vontade deles (ejeção de dimensão).',
+            easy: 'Pode teleportar para locais que nunca visitou.',
+            tiring: 'Salto dimensional esgota o usuário.'
+        }
+    },
+    move_object: {
+        icon: '🧲', title: 'Mover Objetos (Move Object)',
+        cost: '2 pts/rank',
+        desc: `Telecinese, magnetismo, gravidade controlada ou qualquer poder que mova objetos e pessoas à distância. O rank equivale a um nível de <b>Força virtual</b> para fins de quanto peso você move e quanto dano causa ao arremessar.`,
+        resistedBy: 'Resistência (se usado como ataque)',
+        defaultRange: 'À distância (alcance = rank × 30m)',
+        rankScale: [
+            { rank: 3, note: 'Move objetos leves (~25kg)' },
+            { rank: 6, note: 'Levanta carros (1 tonelada)' },
+            { rank: 10, note: 'Move caminhões e tanques (25 toneladas)' },
+            { rank: 14, note: 'Move edifícios inteiros' }
+        ],
+        mods: {
+            damaging: 'Usar objetos arremessados como armas causa Dano igual ao rank.',
+            subtle: 'Telecinese invisível — parece que os objetos se movem sozinhos.',
+            perception_range: 'Alcance ilimitado — qualquer coisa que o herói consegue ver.',
+            area: 'Campo de força gravitacional afetando tudo na área.'
+        }
+    },
+    create: {
+        icon: '✨', title: 'Criar (Create)',
+        cost: '2 pts/rank',
+        desc: `Cria estruturas e objetos de matéria — luz sólida, cristal, gelo, terra, forças. O rank define a <b>Resistência e o volume</b> dos objetos criados. Podem ser usados para prender alvos, criar abrigos, bloquear entradas ou lançar como projéteis.`,
+        resistedBy: 'Resistência (se usar construtos como ataques)',
+        defaultRange: 'Alcance = rank × 15m',
+        rankScale: [
+            { rank: 2, note: 'Objetos pequenos (cadeira, escudo) — Resistência 2' },
+            { rank: 5, note: 'Parede/barricada robusta — Resistência 5' },
+            { rank: 8, note: 'Bunker sólido capaz de resistir explosivos' },
+            { rank: 10, note: 'Estruturas do tamanho de edifícios — Resistência 10' }
+        ],
+        mods: {
+            continuous: 'Os construtos persistem sem manutenção — permanentes até destruídos.',
+            impervious: 'Os objetos criados ignoram ataques fracos — apenas ataques poderosos os destroem.',
+            selective: 'Só aprisiona alvos específicos, deixando aliados livres.',
+            tiring: 'Criar muita matéria de uma vez consome energia vital.'
+        }
+    },
+    senses: {
+        icon: '👁', title: 'Sentidos (Senses)',
+        cost: '1 pt por sentido',
+        desc: `Compra poderes sensoriais individuais — <b>não tem rank progressivo, cada sentido tem custo fixo de 1pt</b>. Permite ver no escuro, detectar energia, sentir perigo, radar, visão térmica, etc. Você compra quantos sentidos quiser.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Varia por sentido',
+        rankScale: [
+            { rank: 1, note: '1 poder sensorial (ex: Visão no Escuro)' },
+            { rank: 3, note: '3 poderes (Escuro + Infravermelho + Radar)' },
+            { rank: 6, note: 'Conjunto completo de super-sentidos' }
+        ],
+        mods: {
+            extended: 'O sentido funciona em alcances muito maiores (+1 por grau de aumento).',
+            acute: 'O sentido é extremamente preciso — identifica indivíduos únicos.',
+            radius: 'O sentido funciona em todas as direções (360°).'
+        }
+    },
+    speed: {
+        icon: '⚡', title: 'Velocidade (Speed)',
+        cost: '1 pt/rank',
+        desc: `Deslocamento terrestre super-rápido. Diferente do Voo (tridimensional), este poder é horizontal. A cada rank, a velocidade dobra.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 1, note: '~15 km/h (corrida humana rápida)' },
+            { rank: 3, note: '~60 km/h (animal veloz)' },
+            { rank: 6, note: '~500 km/h (super-velocista básico)' },
+            { rank: 9, note: '~4.000 km/h (Mach 3+)' },
+            { rank: 12, note: 'Sub-orbital' },
+            { rank: 16, note: 'Velocidade da luz' }
+        ],
+        mods: {
+            subtle: 'Velocidade imperceptível — ninguém vê o herói se mover.',
+            movement: 'Pode passar por paredes ou superfícies específicas em alta velocidade.'
+        }
+    },
+    leaping: {
+        icon: '🦘', title: 'Salto (Leaping)',
+        cost: '1 pt/rank',
+        desc: `Multiplica a distância de salto do personagem. Cada rank dobra a distância. Permite alcances de salto monumentais sem precisar de Voo.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 1, note: '~6m horizontal / 3m vertical' },
+            { rank: 4, note: '~50m — quarteirão' },
+            { rank: 7, note: '~400m — de prédio em prédio' },
+            { rank: 10, note: 'Kilômetros — salto de montanha a montanha' }
+        ],
+        mods: {
+            subtle: 'Salto silencioso — sem barulho de impacto.'
+        }
+    },
+    nullify: {
+        icon: '❌', title: 'Nulificar (Nullify)',
+        cost: '1 pt/rank',
+        desc: `Suprime temporariamente poderes de um alvo. O rank do Nulificar disputa contra o rank do poder alvo. Se vencer, o poder é suprimido pelo turno (pode ser sustentado). Modela inibidores de poder, pulso eletromagnético, antimagia.`,
+        resistedBy: 'Rank do Poder alvo (disputa)',
+        defaultRange: 'Cor-a-cor (precisar de À Distância para usar à distância)',
+        rankScale: [
+            { rank: 5, note: 'Suprime poderes de rank até 5 — capangas e heróis comuns' },
+            { rank: 10, note: 'Ameaça real para qualquer herói de NP 10' },
+            { rank: 15, note: 'Nível de "kill switch" — neutraliza quase qualquer poder' }
+        ],
+        mods: {
+            ranged: 'Nulificador à distância — raio inibitório, campo magnético.',
+            area: 'Campo de supressão em área — zona onde poderes não funcionam.',
+            broad: 'Afeta uma categoria inteira de poderes ao invés de um específico.'
+        }
+    },
+    weaken: {
+        icon: '💀', title: 'Enfraquecer (Weaken)',
+        cost: '1 pt/rank',
+        desc: `Reduz temporariamente os ranks de um Atributo, Habilidade ou Poder do alvo. Devastador quando aplicado ao ponto forte do oponente. Os ranks perdidos retornam gradualmente (1 por minuto fora de combate, ou com Cura).`,
+        resistedBy: 'Fortitude (atributos físicos) ou Vontade (mentais/poderes)',
+        defaultRange: 'Cor-a-cor',
+        rankScale: [
+            { rank: 3, note: 'Redução modesta — -3 em um atributo' },
+            { rank: 7, note: 'Deixa um humano no nível de criança ou paralisa poder importante' },
+            { rank: 10, note: 'Pode zerar completamente um atributo de herói padrão' }
+        ],
+        mods: {
+            ranged: 'Tiro de enfraquecimento ou feixe debilitante à distância.',
+            broad: 'Afeta todos os Atributos ao mesmo tempo com penalidade menor.',
+            simultaneous: 'Inflige Dano E Enfraquecimento com um único ataque.'
+        }
+    },
+    mind_reading: {
+        icon: '🧠', title: 'Leitura Mental (Mind Reading)',
+        cost: '2 pts/rank',
+        desc: `Acessa os pensamentos de um alvo. O grau de sucesso determina a profundidade (1° superficial/emoções → 2° memórias recentes → 3° segredos mais profundos). Com Extras pode servir como comunicação telepática.`,
+        resistedBy: 'Vontade',
+        defaultRange: 'Cor-a-cor (precisa de À Distância para uso remoto)',
+        rankScale: [
+            { rank: 3, note: 'Detecta emoções básicas e intenções' },
+            { rank: 7, note: 'Acessa memórias recentes e segredos superficiais' },
+            { rank: 10, note: 'Leitura completa — nenhum segredo permanece oculto' }
+        ],
+        mods: {
+            ranged: 'Telepatia à distância — olhos apenas.',
+            subtle: 'A vítima não percebe que sua mente foi lida.',
+            communication: 'Comunica-se telepáticamente — com custo de Comunicação combinado.'
+        }
+    },
+    illusion: {
+        icon: '🎭', title: 'Ilusão (Illusion)',
+        cost: '1 pt/rank',
+        desc: `Cria percepções falsas em um alvo ou área. Por padrão afeta apenas <b>um sentido</b>. O rank define a complexidade/cobertura da ilusão. Para ilusões multissensoriais completas, cada sentido adicional é 1pt extra.`,
+        resistedBy: 'Vontade (para detectar)',
+        defaultRange: 'Alcance = rank × 15m',
+        rankScale: [
+            { rank: 2, note: 'Ilusão simples — um objeto pequeno estático' },
+            { rank: 5, note: 'Ilusão detalhada — uma pessoa ou veículo convincente' },
+            { rank: 8, note: 'Cenário complexo completo' },
+            { rank: 10, note: 'Ilusão tão elaborada que é indistinguível da realidade' }
+        ],
+        mods: {
+            selective: 'Só alguns alvos veem a ilusão.',
+            phantasm: 'A ilusão afeta a mente diretamente — mesmo cegos "veem" (Vontade no lugar de Percepção).',
+            independent: 'A ilusão persiste e age sozinha sem manutenção.'
+        }
+    },
+    concealment: {
+        icon: '👤', title: 'Camuflagem (Concealment)',
+        cost: '2 pts/rank',
+        desc: `Torna o personagem invisível ou indetectável para sentidos específicos. Rank 1 = impede um sentido. Rank 2 = todos os sentidos daquele tipo. Múltiplos ranks cobrem múltiplos tipos de sentido.`,
+        resistedBy: 'N/A — a Percepção do observador contraria',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 1, note: 'Esconde de um sentido (ex: apenas visão)' },
+            { rank: 3, note: 'Invisível visualmente e sem odor' },
+            { rank: 5, note: 'Imperceptível para todos os sentidos normais' }
+        ],
+        mods: {
+            selective: 'O personagem controla quem pode ou não vê-lo.',
+            continuous: 'Camuflagem sempre ativa sem esforço consciente.'
+        }
+    },
+    growth: {
+        icon: '🦕', title: 'Crescimento (Growth)',
+        cost: '2 pts/rank',
+        desc: `O personagem aumenta de tamanho. Cada rank de Crescimento dá +1 Força, +1 Vigor, bônus para ser acertado (mais fácil de acertar) e +1 Intimidação. Personagens enormes têm alcance maior mas são alvos maiores.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 2, note: 'Dobro do tamanho (~3m)' },
+            { rank: 4, note: '~6m de altura — gigante notável' },
+            { rank: 8, note: '~25m — nível Kaiju' },
+            { rank: 12, note: 'Tamanho montanhoso' }
+        ],
+        mods: {
+            continuous: 'Sempre neste tamanho — não pode encolher.',
+            subtle: 'Crescimento silencioso e lento — imperceptível para observadores.'
+        }
+    },
+    shrinking: {
+        icon: '🐜', title: 'Encolhimento (Shrinking)',
+        cost: '2 pts/rank',
+        desc: `Reduz o tamanho do personagem. Cada rank dá -1 Força, mas também -1 para ser acertado (menor = mais difícil de acertar) e +1 Furtividade. Personagens minúsculos podem entrar em lugares impossíveis.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 2, note: 'Metade do tamanho' },
+            { rank: 4, note: 'Tamanho de um gato' },
+            { rank: 8, note: 'Microscópico — invisível a olho nu' },
+            { rank: 12, note: 'Subatômico' }
+        ],
+        mods: {
+            continuous: 'Sempre neste tamanho — herói normalmente minúsculo.'
+        }
+    },
+    transform: {
+        icon: '🔄', title: 'Transformação (Transform)',
+        cost: '2 pts/rank',
+        desc: `Altera a forma ou substância de um alvo (ou a si mesmo). O rank determina a magnitude da transformação. Pode transformar pessoas em animais, objetos em ouro, ou o herói em qualquer forma.`,
+        resistedBy: 'Fortitude (físico) ou Vontade (mental)',
+        defaultRange: 'Cor-a-cor (toque)',
+        rankScale: [
+            { rank: 2, note: 'Pequena alteração (cor, textura)' },
+            { rank: 5, note: 'Forma animal ou objeto simples' },
+            { rank: 8, note: 'Qualquer forma de tamanho similar' },
+            { rank: 10, note: 'Transformação total, incluindo materiais raros' }
+        ],
+        mods: {
+            ranged: 'Transformação à distância — raio ou toque mágico.',
+            continuous: 'A forma permanece sem esforço mental.'
+        }
+    },
+    summon: {
+        icon: '👥', title: 'Invocar (Summon)',
+        cost: '2 pts/rank',
+        desc: `Convoca capangas (aliados controlados). O rank define o nível de poder dos capangas invocados. Por padrão, você controla 1 capanga de uma vez. Para múltiplos, adicione o Extra "Múltiplos Capangas".`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal (aparecem ao lado)',
+        rankScale: [
+            { rank: 3, note: 'Capanga fraco (NP 3) — recruta básico' },
+            { rank: 5, note: 'Capanga competente (NP 5)' },
+            { rank: 7, note: 'Capanga poderoso (NP 7) — aliado sério' },
+            { rank: 10, note: 'Herói de igual poder (NP 10)' }
+        ],
+        mods: {
+            multiple_minions: 'Invoca vários ao mesmo tempo (2^rank capangas por uso).',
+            active: 'Os capangas agem com autonomia, não precisando de comandos explícitos.',
+            continuous: 'Os capangas persistem sem manutenção — ficam até destruídos.'
+        }
+    },
+    variable: {
+        icon: '♾', title: 'Variável (Variable)',
+        cost: '7 pts/rank',
+        desc: `O poder mais caro e flexível. Cria uma <b>pool de pontos</b> (rank × 5) que você pode distribuir livremente entre quaisquer poderes a cada cena. Modela adaptação, magia genérica, copiar poderes ou inteligência suprema. Muito regulado — exige aprovação prévia do Mestre.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 1, note: 'Pool de 5 pts — alguns poderes simples' },
+            { rank: 2, note: 'Pool de 10 pts — poder significativo' },
+            { rank: 4, note: 'Pool de 20 pts — herói bem equipado' },
+            { rank: 6, note: 'Pool de 30 pts — nível de poder avançado' }
+        ],
+        mods: {
+            slow: 'A realocação da pool leva mais tempo (minuto em vez de ação livre).',
+            tiring: 'Usar a pool causa fadiga acumulada.'
+        }
+    },
+    enhanced_trait: {
+        icon: '⬆', title: 'Característica Ampliada (Enhanced Trait)',
+        cost: '1 pt/rank',
+        desc: `Aumenta temporariamente um Atributo, Habilidade, Vantagem ou outra característica. É a forma mais econômica de aumentar Atributos e Defesas (normalmente custam 2pts na criação mas aqui custam 1pt/rank como poder sustentado/limitado).`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 2, note: '+2 em um Atributo ou Defesa' },
+            { rank: 5, note: '+5 — bônus significativo para a maioria dos personagens' },
+            { rank: 10, note: '+10 — transforma um ponto fraco em ponto forte' }
+        ],
+        mods: {
+            continuous: 'O bônus é permanente — sempre ativo.',
+            tiring: 'Forçar o corpo além dos limites causa fadiga.',
+            removable: 'O bônus vem de um item/dispositivo externo.'
+        }
+    },
+    deflect: {
+        icon: '🛡', title: 'Deflexão (Deflect)',
+        cost: '1 pt/rank',
+        desc: `Intercepta ataques à distância contra você ou aliados próximos. Faz uma rolagem de Deflexão contra o ataque inimigo. Com rank alto, pode desviar ataques que normalmente seriam impossíveis de evitar.`,
+        resistedBy: 'N/A (é uma defesa ativa)',
+        defaultRange: 'Cor-a-cor ou alcance do poder',
+        rankScale: [
+            { rank: 3, note: 'Deflexão básica — para projéteis lentos' },
+            { rank: 7, note: 'Pode desviar balas e feixes de energia' },
+            { rank: 10, note: 'Deflexão de qualquer coisa, incluindo ataques de área' }
+        ],
+        mods: {
+            reflect: 'Pode redirecionar o ataque de volta ao atacante.',
+            redirect: 'Pode apontar o ataque para qualquer alvo adjacente.'
+        }
+    },
+    burrowing: {
+        icon: '⛏', title: 'Escavação (Burrowing)',
+        cost: '1 pt/rank',
+        desc: `Capacidade de se mover através de terra, rocha e outros materiais sólidos. A velocidade de escavação e a dureza dos materiais atravessáveis aumentam com o rank.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 1, note: 'Terra fofa (areia, lama)' },
+            { rank: 3, note: 'Solo compactado e argila' },
+            { rank: 6, note: 'Rocha sólida' },
+            { rank: 10, note: 'Metal e liga reforçada' }
+        ],
+        mods: {
+            subtle: 'Sem deixar rastro ou abertura — como se a terra se fechasse atrás.'
+        }
+    },
+    immortality: {
+        icon: '♾', title: 'Imortalidade (Immortality)',
+        cost: '2 pts/rank',
+        desc: `O personagem retorna da morte após um tempo. O rank determina a velocidade de retorno. Não previne a morte — apenas garante que ela não é permanente. O personagem ainda pode ser derrubado e capturado enquanto "morto".`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 1, note: 'Retorna em 1 semana' },
+            { rank: 3, note: 'Retorna em 1 dia' },
+            { rank: 5, note: 'Retorna em 1 hora' },
+            { rank: 8, note: 'Retorna em minutos' },
+            { rank: 10, note: 'Retorna quase instantaneamente' }
+        ],
+        mods: {
+            removable: 'A imortalidade vem de um artefato ou encantamento externo que pode ser removido.'
+        }
+    },
+    quickness: {
+        icon: '⚡', title: 'Rapidez (Quickness)',
+        cost: '1 pt/rank',
+        desc: `Permite realizar mais ações mentais ou físicas no mesmo tempo. Diferente de Velocidade (movimento), Rapidez reduz o tempo necessário para tarefas como construção, pesquisa, hackear sistemas e fabricar itens.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 2, note: 'Faz em 1 minuto o que leva 5' },
+            { rank: 5, note: 'Uma hora vira segundos' },
+            { rank: 8, note: 'Um dia vira minutos' },
+            { rank: 12, note: 'Processamento sobre-humano — meses em horas' }
+        ],
+        mods: {
+            limited: 'Só físico ou só mental (reduz custo).'
+        }
+    },
+    remote_sensing: {
+        icon: '👁', title: 'Sentido Remoto (Remote Sensing)',
+        cost: '1 pt/rank',
+        desc: `Projeta um ponto de percepção em outro local, "sentindo" o que acontece lá. Pode ver, ouvir ou detectar à distância sem estar fisicamente presente. Usado para espionagem, reconhecimento e vigilância.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Rank × 1,5km',
+        rankScale: [
+            { rank: 2, note: '~3 km de alcance' },
+            { rank: 5, note: '~7 km — cidade toda' },
+            { rank: 8, note: '~12 km — área metropolitana' },
+            { rank: 12, note: 'Continental' }
+        ],
+        mods: {
+            subtle: 'O ponto de observação é invisível e indetectável.',
+            dimensional: 'Pode observar outras dimensões ou planos.'
+        }
+    },
+    elongation: {
+        icon: '🦑', title: 'Alongamento (Elongation)',
+        cost: '1 pt/rank',
+        desc: `O personagem pode esticar membros e o corpo a grandes distâncias, atacando ou alcançando alvos distantes sem se mover.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Corpo',
+        rankScale: [
+            { rank: 1, note: 'Alcance de 3m' },
+            { rank: 3, note: 'Alcance de 15m' },
+            { rank: 6, note: 'Alcance de 60m — quareirão inteiro' },
+            { rank: 10, note: 'Centenas de metros' }
+        ],
+        mods: {
+            subtle: 'Estiramento imperceptível — parece que o herói se move normalmente.'
+        }
+    },
+    swimming: {
+        icon: '🌊', title: 'Natação (Swimming)',
+        cost: '1 pt/rank',
+        desc: `Velocidade de natação super-humana e capacidade de manobrar livremente na água. Não inclui respirar embaixo d\'água — para isso, adicione Imunidade à Asfixia.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 2, note: '~8 km/h (nadador humano excelente)' },
+            { rank: 5, note: '~60 km/h (golfinho)' },
+            { rank: 8, note: '~500 km/h' },
+            { rank: 10, note: 'Velocidade de torpedo' }
+        ],
+        mods: {}
+    },
+    communication: {
+        icon: '📡', title: 'Comunicação (Communication)',
+        cost: '4 pts/rank',
+        desc: `Permite comunicação a grande distância sem dispositivos. Pode ser telepatia, transmissão de rádio biológica, ou qualquer forma de comunicação super-humana. O rank define o alcance.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Rank × 1,5km',
+        rankScale: [
+            { rank: 1, note: '~1,5 km' },
+            { rank: 3, note: '~4 km — cidade' },
+            { rank: 6, note: '~9 km' },
+            { rank: 10, note: 'Global' }
+        ],
+        mods: {
+            subtle: 'Transmissão criptografada — imperceptível para outros.',
+            rapid: 'Comunicação instantânea independentemente da distância.'
+        }
+    },
+    comprehend: {
+        icon: '🗣', title: 'Compreender (Comprehend)',
+        cost: '2 pts/rank',
+        desc: `Entende e fala qualquer idioma, lê qualquer escrita, ou se comunica com animais/máquinas. O rank determina o escopo: rank 1 = um tipo específico, rank 2 = todos os idiomas, rank 3+ = comunicação com qualquer ser.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 1, note: 'Um idioma específico ou tipo de comunicação' },
+            { rank: 2, note: 'Todos idiomas humanos' },
+            { rank: 3, note: 'Qualquer linguagem (animais, máquinas, alienígenas)' }
+        ],
+        mods: {}
+    },
+    environment: {
+        icon: '🌪', title: 'Ambiente (Environment)',
+        cost: '1 pt/rank',
+        desc: `Cria um ambiente hostil ou específico em uma área — clima, temperatura, gravidade, iluminação. Pode ser usado para criar tempestades, campos de gravitação alterada, escuridão sobrenatural, etc.`,
+        resistedBy: 'Fortitude (para danos ambientais)',
+        defaultRange: 'Área = rank × 7,5m de raio',
+        rankScale: [
+            { rank: 2, note: 'Alteração modesta de ambiente (chuva fraca, leve calor)' },
+            { rank: 5, note: 'Tempestade significativa ou calor extremo' },
+            { rank: 8, note: 'Furacão ou blizzard' },
+            { rank: 10, note: 'Cataclismo local controlado' }
+        ],
+        mods: {
+            selective: 'O ambiente afeta apenas alvos escolhidos, poupando aliados.'
+        }
+    },
+    luck_control: {
+        icon: '🍀', title: 'Controle de Sorte (Luck Control)',
+        cost: '3 pts/rank',
+        desc: `Manipula a sorte de aliados ou inimigos. Pode conceder ou roubar Pontos Heróicos, forçar rerrolagens, ou garantir sucessos/falhas automáticos em certas situações.`,
+        resistedBy: 'Vontade',
+        defaultRange: 'Alcance visual',
+        rankScale: [
+            { rank: 1, note: 'Pequenas manipulações — forçar rerrolagem' },
+            { rank: 3, note: 'Redistribuição de Pontos Heróicos' },
+            { rank: 5, note: 'Garantia de sucesso ou falha crítica em ação' }
+        ],
+        mods: {}
+    },
+    extra_limbs: {
+        icon: '🦑', title: 'Membros Extras (Extra Limbs)',
+        cost: '1 pt por membro',
+        desc: `Tentáculos, braços extras, caudas preênseis ou qualquer apêndice adicional funcional. Cada rank dá um membro extra que pode ser usado para agarrar adicionalmente ou como bônus em certas manobras.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 1, note: '1 membro extra' },
+            { rank: 4, note: '4 membros extras — múltiplos alvos de agarrão simultâneo' }
+        ],
+        mods: {}
+    },
+    feature: {
+        icon: '⭐', title: 'Recurso (Feature)',
+        cost: '1 pt por recurso',
+        desc: `Habilidades menores úteis que não se encaixam em efeitos maiores. Ex: bioluminescência, resistência a alergia específica, orientação magnética, sintetizar alimento, etc. O Mestre decide o que cabe nesta categoria.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Varia',
+        rankScale: [
+            { rank: 1, note: '1 recurso menor específico' }
+        ],
+        mods: {}
+    },
+    movement: {
+        icon: '🏃', title: 'Movimento Especial (Movement)',
+        cost: '2 pts por tipo',
+        desc: `Formas específicas de movimentos especiais que não são cobertos pelo Voo ou Velocidade. Ex: Andar pelas paredes, deslizar pela superfície da água, teletransporte dimensional, movimento intuitivo por dimensões extras.`,
+        resistedBy: 'N/A',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 1, note: '1 tipo de movimento especial' },
+            { rank: 3, note: '3 tipos — personagem extremamente móvel' }
+        ],
+        mods: {}
+    },
+    impervious_toughness: {
+        icon: '🗿', title: 'Resistência Impenetrável (Impervious)',
+        cost: '1 pt/rank',
+        desc: `Ataques com Dano abaixo da <b>metade do rank</b> simplesmente não causam dano — são completamente ignorados. É o poder defensivo mais poderoso contra ataques fracos e medianos, tornando o herói praticamente imune a combatentes comuns.`,
+        resistedBy: 'N/A — é uma defesa passiva',
+        defaultRange: 'Pessoal',
+        rankScale: [
+            { rank: 4, note: 'Ignora ataques com Dano 1-2' },
+            { rank: 8, note: 'Ignora ataques com Dano 1-4 — imune a humanos normais' },
+            { rank: 12, note: 'Ignora ataques com Dano 1-6 — só heróis poderosos causam dano' },
+            { rank: 16, note: 'Ignora ataques com Dano 1-8 — invulnerável a quase tudo' }
+        ],
+        mods: {
+            removable: 'A impenetrabilidade vem de um traje ou material especial.',
+            continuous: 'Sempre ativa sem esforço.'
+        }
+    },
+    custom: {
+        icon: '🔧', title: 'Poder Customizado',
+        cost: '1 pt/rank (padrão)',
+        desc: `Efeito criado colaborativamente com o Mestre. Use para poderes que não se encaixam perfeitamente em nenhuma categoria. Defina o custo base, como os ranks escalam e quais defesas resistem junto com o Mestre antes de adicionar à ficha.`,
+        resistedBy: 'Definido pelo Mestre',
+        defaultRange: 'Definido pelo Mestre',
+        rankScale: [
+            { rank: 1, note: 'Efeito inicial básico (definido pelo Mestre)' },
+            { rank: 5, note: 'Efeito moderado' },
+            { rank: 10, note: 'Efeito poderoso de nível NP padrão' }
+        ],
+        mods: {}
+    }
+};
+
+function buildPowerHelp(effectId, powerName) {
+    const data = powerHelpData[effectId];
+    if (!data) return `<p style="color:var(--muted);">Selecione um poder para ver sua descrição detalhada aqui.</p>`;
+
+    let rankRows = data.rankScale.map(r =>
+        `<tr>
+            <td style="padding:5px 8px;font-weight:700;color:var(--primary);white-space:nowrap;">Rank ${r.rank}</td>
+            <td style="padding:5px 8px;">${r.note}</td>
+        </tr>`).join('');
+
+    let modRows = Object.entries(data.mods || {}).map(([key, desc]) => {
+        const md = dictModifiers.find(m => m.id === key);
+        const name = md ? md.pt : key;
+        const isPos = md ? md.cost >= 0 && !md.type.includes('removable') : true;
+        const col = md && md.type.includes('removable') ? '#d29922' : isPos ? '#58a6ff' : '#f85149';
+        return `<div style="padding:8px 10px;border-left:3px solid ${col};background:${col}11;border-radius:0 5px 5px 0;margin-bottom:6px;font-size:.9em;">
+            <strong style="color:${col};">${name}</strong><br>
+            <span style="color:var(--text);">${desc}</span>
+        </div>`;
+    }).join('');
+
+    return `
+        <div style="margin-bottom:16px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                <span style="font-size:2em;">${data.icon}</span>
+                <div>
+                    <h3 style="color:var(--primary);font-size:1.2em;margin:0;">${data.title}</h3>
+                    ${powerName ? `<div style="color:var(--muted);font-size:.88em;">Configurado como: <b>${powerName}</b></div>` : ''}
+                </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+                <span style="background:rgba(188,140,255,.2);color:var(--accent);border-radius:10px;padding:3px 10px;font-size:.82em;font-weight:700;">💰 ${data.cost}</span>
+                <span style="background:rgba(255,255,255,.06);color:var(--muted);border-radius:10px;padding:3px 10px;font-size:.82em;">🎯 ${data.defaultRange}</span>
+                <span style="background:rgba(248,81,73,.15);color:var(--danger);border-radius:10px;padding:3px 10px;font-size:.82em;">🛡 Resiste: ${data.resistedBy}</span>
+            </div>
+        </div>
+
+        <div class="help-section">
+            <div class="help-section-title open" onclick="toggleAccordion('d0','phb-desc',this)">
+                <span>📖 O que faz este efeito?</span><span class="arrow">▶</span>
+            </div>
+            <div class="help-section-body open" id="phb-desc"><p>${data.desc}</p></div>
+        </div>
+
+        <div class="help-section">
+            <div class="help-section-title" onclick="toggleAccordion('d1','phb-ranks',this)">
+                <span>📈 Como as Graduações (Ranks) escalam?</span><span class="arrow">▶</span>
+            </div>
+            <div class="help-section-body" id="phb-ranks">
+                <table style="width:100%;border-collapse:collapse;font-size:.9em;">
+                    ${rankRows}
+                </table>
+            </div>
+        </div>
+
+        ${modRows ? `
+        <div class="help-section">
+            <div class="help-section-title" onclick="toggleAccordion('d2','phb-mods',this)">
+                <span>⚙ Modificadores recomendados para este poder</span><span class="arrow">▶</span>
+            </div>
+            <div class="help-section-body" id="phb-mods">${modRows}</div>
+        </div>` : ''}
+    `;
+}
+
+/* ===== DICTIONARIES ===== */
+const dictAttrs = [
+    {id:'str',pt:'Força',en:'Strength'},{id:'sta',pt:'Vigor',en:'Stamina'},
+    {id:'agl',pt:'Agilidade',en:'Agility'},{id:'dex',pt:'Destreza',en:'Dexterity'},
+    {id:'fgt',pt:'Luta',en:'Fighting'},{id:'int',pt:'Intelecto',en:'Intellect'},
+    {id:'awe',pt:'Prontidão',en:'Awareness'},{id:'pre',pt:'Presença',en:'Presence'}
+];
+const dictDefenses = [
+    {id:'dodge',pt:'Esquiva',en:'Dodge',base:'agl'},
+    {id:'parry',pt:'Aparar',en:'Parry',base:'fgt'},
+    {id:'fortitude',pt:'Fortitude',en:'Fortitude',base:'sta'},
+    {id:'will',pt:'Vontade',en:'Will',base:'awe'},
+    {id:'toughness',pt:'Resistência',en:'Toughness',base:'sta',isToughness:true}
+];
+const dictSkills = [
+    {id:'acrobatics',pt:'Acrobacia',en:'Acrobatics',base:'agl'},
+    {id:'athletics',pt:'Atletismo',en:'Athletics',base:'str'},
+    {id:'close_combat',pt:'Combate Cor-a-cor',en:'Close Combat',base:'fgt',custom:true},
+    {id:'deception',pt:'Enganação',en:'Deception',base:'pre'},
+    {id:'expertise',pt:'Especialidade',en:'Expertise',base:'int',custom:true},
+    {id:'insight',pt:'Intuição',en:'Insight',base:'awe'},
+    {id:'intimidation',pt:'Intimidação',en:'Intimidation',base:'pre'},
+    {id:'investigation',pt:'Investigação',en:'Investigation',base:'int'},
+    {id:'perception',pt:'Percepção',en:'Perception',base:'awe'},
+    {id:'persuasion',pt:'Persuasão',en:'Persuasion',base:'pre'},
+    {id:'ranged_combat',pt:'Combate à Distância',en:'Ranged Combat',base:'dex',custom:true},
+    {id:'sleight',pt:'Prestidigitação',en:'Sleight of Hand',base:'dex'},
+    {id:'stealth',pt:'Furtividade',en:'Stealth',base:'agl'},
+    {id:'technology',pt:'Tecnologia',en:'Technology',base:'int'},
+    {id:'treatment',pt:'Tratamento',en:'Treatment',base:'int'},
+    {id:'vehicles',pt:'Veículos',en:'Vehicles',base:'dex'}
+];
+const dictAdvantages = [
+    {id:'accurate_attack',pt:'Ataque Acurado',en:'Accurate Attack'},
+    {id:'all_out_attack',pt:'Ataque Imprudente',en:'All-out Attack'},
+    {id:'power_attack',pt:'Ataque Poderoso',en:'Power Attack'},
+    {id:'defensive_attack',pt:'Ataque Defensivo',en:'Defensive Attack'},
+    {id:'improved_initiative',pt:'Iniciativa Aprimorada',en:'Improved Initiative'},
+    {id:'takedown',pt:'Derrubar',en:'Takedown'},
+    {id:'assessment',pt:'Avaliação',en:'Assessment'},
+    {id:'attractive',pt:'Atraente',en:'Attractive'},
+    {id:'benefit',pt:'Benefício',en:'Benefit'},
+    {id:'close_attack',pt:'Ataque Corpo-a-corpo',en:'Close Attack'},
+    {id:'ranged_attack',pt:'Ataque à Distância',en:'Ranged Attack'},
+    {id:'eidetic_memory',pt:'Memória Eidética',en:'Eidetic Memory'},
+    {id:'equipment',pt:'Equipamento',en:'Equipment'},
+    {id:'evasion',pt:'Evasão',en:'Evasion'},
+    {id:'fearless',pt:'Destemido',en:'Fearless'},
+    {id:'improved_critical',pt:'Crítico Aprimorado',en:'Improved Critical'},
+    {id:'interpose',pt:'Interpor-se',en:'Interpose'},
+    {id:'luck',pt:'Sorte',en:'Luck'},
+    {id:'move_by_action',pt:'Ação em Movimento',en:'Move-by Action'},
+    {id:'precise_attack',pt:'Ataque Preciso',en:'Precise Attack'},
+    {id:'uncanny_dodge',pt:'Esquiva Fabulosa',en:'Uncanny Dodge'},
+    {id:'fast_grab',pt:'Agarrar Rápido',en:'Fast Grab'},
+    {id:'extraordinary_effort',pt:'Esforço Extraordinário',en:'Extraordinary Effort'}
+].sort((a,b)=>a.pt.localeCompare(b.pt));
+
+const dictEffects = [
+    {id:'affliction',pt:'Aflição',en:'Affliction',cost:1,type:'per_rank'},
+    {id:'burrowing',pt:'Escavação',en:'Burrowing',cost:1,type:'per_rank'},
+    {id:'communication',pt:'Comunicação',en:'Communication',cost:4,type:'per_rank'},
+    {id:'comprehend',pt:'Compreender',en:'Comprehend',cost:2,type:'per_rank'},
+    {id:'concealment',pt:'Camuflagem',en:'Concealment',cost:2,type:'per_rank'},
+    {id:'create',pt:'Criar',en:'Create',cost:2,type:'per_rank'},
+    {id:'damage',pt:'Dano',en:'Damage',cost:1,type:'per_rank'},
+    {id:'deflect',pt:'Deflexão',en:'Deflect',cost:1,type:'per_rank'},
+    {id:'elongation',pt:'Alongamento',en:'Elongation',cost:1,type:'per_rank'},
+    {id:'enhanced_trait',pt:'Característica Ampliada',en:'Enhanced Trait',cost:1,type:'per_rank'},
+    {id:'environment',pt:'Ambiente',en:'Environment',cost:1,type:'per_rank'},
+    {id:'extra_limbs',pt:'Membros Extras',en:'Extra Limbs',cost:1,type:'flat'},
+    {id:'feature',pt:'Recurso',en:'Feature',cost:1,type:'flat'},
+    {id:'flight',pt:'Voo',en:'Flight',cost:2,type:'per_rank'},
+    {id:'growth',pt:'Crescimento',en:'Growth',cost:2,type:'per_rank'},
+    {id:'healing',pt:'Cura',en:'Healing',cost:2,type:'per_rank'},
+    {id:'illusion',pt:'Ilusão',en:'Illusion',cost:1,type:'per_rank'},
+    {id:'immortality',pt:'Imortalidade',en:'Immortality',cost:2,type:'per_rank'},
+    {id:'immunity',pt:'Imunidade',en:'Immunity',cost:1,type:'flat'},
+    {id:'impervious_toughness',pt:'Resist. Impenetrável',en:'Impervious',cost:1,type:'per_rank'},
+    {id:'leaping',pt:'Salto',en:'Leaping',cost:1,type:'per_rank'},
+    {id:'luck_control',pt:'Controle de Sorte',en:'Luck Control',cost:3,type:'per_rank'},
+    {id:'mind_reading',pt:'Leitura Mental',en:'Mind Reading',cost:2,type:'per_rank'},
+    {id:'movement',pt:'Movimento Especial',en:'Movement',cost:2,type:'flat'},
+    {id:'move_object',pt:'Mover Objetos',en:'Move Object',cost:2,type:'per_rank'},
+    {id:'nullify',pt:'Nulificar',en:'Nullify',cost:1,type:'per_rank'},
+    {id:'protection',pt:'Proteção',en:'Protection',cost:1,type:'per_rank'},
+    {id:'quickness',pt:'Rapidez',en:'Quickness',cost:1,type:'per_rank'},
+    {id:'regeneration',pt:'Regeneração',en:'Regeneration',cost:1,type:'per_rank'},
+    {id:'remote_sensing',pt:'Sentido Remoto',en:'Remote Sensing',cost:1,type:'per_rank'},
+    {id:'senses',pt:'Sentidos',en:'Senses',cost:1,type:'flat'},
+    {id:'shrinking',pt:'Encolhimento',en:'Shrinking',cost:2,type:'per_rank'},
+    {id:'speed',pt:'Velocidade',en:'Speed',cost:1,type:'per_rank'},
+    {id:'summon',pt:'Invocar',en:'Summon',cost:2,type:'per_rank'},
+    {id:'swimming',pt:'Natação',en:'Swimming',cost:1,type:'per_rank'},
+    {id:'teleport',pt:'Teleporte',en:'Teleport',cost:2,type:'per_rank'},
+    {id:'transform',pt:'Transformação',en:'Transform',cost:2,type:'per_rank'},
+    {id:'variable',pt:'Variável',en:'Variable',cost:7,type:'per_rank'},
+    {id:'weaken',pt:'Enfraquecer',en:'Weaken',cost:1,type:'per_rank'},
+    {id:'custom',pt:'Poder Customizado',en:'Custom',cost:1,type:'per_rank'}
+].sort((a,b)=>a.pt.localeCompare(b.pt));
+
+const dictModifiers = [
+    {id:'accurate',pt:'Acurado (+2 Atk)',en:'Accurate',cost:1,type:'flat'},
+    {id:'active',pt:'Ativo (Invocar)',en:'Active',cost:1,type:'per_rank'},
+    {id:'affects_corporeal',pt:'Afeta Corpóreo',en:'Affects Corporeal',cost:1,type:'flat'},
+    {id:'affects_insubstantial',pt:'Afeta Insubstancial',en:'Affects Insubstantial',cost:1,type:'flat'},
+    {id:'alternate_effect',pt:'Efeito Alternativo',en:'Alternate Effect',cost:1,type:'flat'},
+    {id:'area',pt:'Área',en:'Area',cost:1,type:'per_rank'},
+    {id:'continuous',pt:'Contínuo',en:'Continuous',cost:1,type:'per_rank'},
+    {id:'dynamic_alternate',pt:'Efeito Dinâmico',en:'Dynamic Alternate',cost:2,type:'flat'},
+    {id:'homing',pt:'Teleguiado',en:'Homing',cost:1,type:'flat'},
+    {id:'impervious',pt:'Impenetrável (Extra)',en:'Impervious',cost:1,type:'per_rank'},
+    {id:'insidious',pt:'Insidioso',en:'Insidious',cost:1,type:'flat'},
+    {id:'linked',pt:'Ligado',en:'Linked',cost:0,type:'flat'},
+    {id:'multiattack',pt:'Ataque Múltiplo',en:'Multiattack',cost:1,type:'per_rank'},
+    {id:'multiple_minions',pt:'Múltiplos Capangas',en:'Multiple Minions',cost:2,type:'per_rank'},
+    {id:'penetrating',pt:'Penetrante',en:'Penetrating',cost:1,type:'flat'},
+    {id:'perception_range',pt:'Alcance: Percepção',en:'Perception',cost:2,type:'per_rank'},
+    {id:'ranged',pt:'À Distância',en:'Ranged',cost:1,type:'per_rank'},
+    {id:'reaction',pt:'Reação',en:'Reaction',cost:3,type:'per_rank'},
+    {id:'reversible',pt:'Reversível',en:'Reversible',cost:1,type:'flat'},
+    {id:'secondary_effect',pt:'Efeito Secundário',en:'Secondary Effect',cost:1,type:'per_rank'},
+    {id:'selective',pt:'Seletivo',en:'Selective',cost:1,type:'per_rank'},
+    {id:'split',pt:'Dividido',en:'Split',cost:1,type:'flat'},
+    {id:'subtle',pt:'Sutil',en:'Subtle',cost:1,type:'flat'},
+    {id:'sustained',pt:'Sustentado',en:'Sustained',cost:0,type:'per_rank'},
+    // Flaws (negative)
+    {id:'activation',pt:'Ativação',en:'Activation',cost:-1,type:'flat'},
+    {id:'check_required',pt:'Teste Exigido',en:'Check Required',cost:-1,type:'flat'},
+    {id:'close_flaw',pt:'Cor-a-cor (Falha)',en:'Close',cost:-1,type:'per_rank'},
+    {id:'diminished_range',pt:'Alcance Diminuído',en:'Diminished Range',cost:-1,type:'flat'},
+    {id:'distracting',pt:'Distrai',en:'Distracting',cost:-1,type:'per_rank'},
+    {id:'easily_removable',pt:'Facilmente Removível (-2/5)',en:'Easily Removable',cost:0,type:'easily_removable'},
+    {id:'fades',pt:'Desvanece',en:'Fades',cost:-1,type:'per_rank'},
+    {id:'feedback',pt:'Feedback',en:'Feedback',cost:-1,type:'per_rank'},
+    {id:'grab_based',pt:'Baseado em Agarrar',en:'Grab-based',cost:-1,type:'per_rank'},
+    {id:'inaccurate',pt:'Inacurado (-2 Atk)',en:'Inaccurate',cost:-1,type:'flat'},
+    {id:'noticeable',pt:'Perceptível',en:'Noticeable',cost:-1,type:'flat'},
+    {id:'permanent',pt:'Permanente',en:'Permanent',cost:-1,type:'per_rank'},
+    {id:'removable',pt:'Removível (-1/5)',en:'Removable',cost:0,type:'removable'},
+    {id:'resistible',pt:'Resistível',en:'Resistible',cost:-1,type:'per_rank'},
+    {id:'sense_dependent',pt:'Dep. de Sentido',en:'Sense-Dependent',cost:-1,type:'per_rank'},
+    {id:'tiring',pt:'Cansativo',en:'Tiring',cost:-1,type:'per_rank'},
+    {id:'unreliable',pt:'Inconfiável',en:'Unreliable',cost:-1,type:'per_rank'},
+    {id:'custom_extra',pt:'Extra Custom. (+1/rank)',en:'Custom Extra',cost:1,type:'per_rank'},
+    {id:'custom_flaw',pt:'Falha Custom. (-1/rank)',en:'Custom Flaw',cost:-1,type:'per_rank'}
+].sort((a,b)=>a.pt.localeCompare(b.pt));
+
+/* ===== STATE ===== */
+let state = {
+    np:10, characterName:'', identity:'', player:'',
+    complications:[],
+    attributes:{str:0,sta:0,agl:0,dex:0,fgt:0,int:0,awe:0,pre:0},
+    defenses:{dodge:0,parry:0,fortitude:0,will:0,toughness:0},
+    skills:[], advantages:[], powers:[]
+};
+
+function initBaseSkills() {
+    if (state.skills.length === 0) {
+        dictSkills.forEach(s => { if (!s.custom) state.skills.push({id:s.id,name:'',ranks:0}); });
+    }
+}
+
+/* ===== ARCHETYPES ===== */
+const archetypes = {
+    invincible:{np:10,characterName:'Invencível (Mark Grayson)',identity:'Secreta',player:'',
+        attributes:{str:10,sta:10,agl:2,dex:2,fgt:8,int:0,awe:2,pre:2},
+        defenses:{dodge:8,parry:2,fortitude:0,will:8,toughness:0},
+        skills:[{id:'close_combat',name:'Desarmado',ranks:4},{id:'athletics',name:'',ranks:4},{id:'perception',name:'',ranks:4},{id:'persuasion',name:'',ranks:4}],
+        advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1},{id:'interpose',ranks:1},{id:'move_by_action',ranks:1},{id:'fast_grab',ranks:1}],
+        powers:[{id:'p1',effectId:'flight',name:'Voo Viltrumita',ranks:10,modifiers:[]},{id:'p2',effectId:'immunity',name:'Suporte de Vida',ranks:10,modifiers:[]},{id:'p3',effectId:'impervious_toughness',name:'Pele Impenetrável',ranks:10,modifiers:[]},{id:'p4',effectId:'senses',name:'Sentidos Ampliados',ranks:2,modifiers:[]}],
+        complications:[{name:'Motivação: Fazer o Bem',desc:'Mark quer ser herói.'},{name:'Relacionamentos',desc:'Sua mãe, Eve, William.'}]},
+    omniman:{np:10,characterName:'Omni-Man (Nolan Grayson)',identity:'Pública',player:'',
+        attributes:{str:12,sta:12,agl:2,dex:2,fgt:8,int:2,awe:4,pre:4},
+        defenses:{dodge:6,parry:0,fortitude:0,will:6,toughness:0},
+        skills:[{id:'intimidation',name:'',ranks:8},{id:'expertise',name:'Táticas Militares',ranks:8}],
+        advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1},{id:'takedown',ranks:2},{id:'fearless',ranks:1},{id:'assessment',ranks:1}],
+        powers:[{id:'p1',effectId:'flight',name:'Voo Intergalático',ranks:11,modifiers:[]},{id:'p2',effectId:'immunity',name:'Fisiologia Viltrumita',ranks:10,modifiers:[]}],
+        complications:[{name:'Motivação: Império Viltrumita',desc:'Preparar a Terra para anexação.'}]},
+    atomeve:{np:10,characterName:'Atom Eve (Samantha Wilkins)',identity:'Secreta',player:'',
+        attributes:{str:0,sta:2,agl:4,dex:4,fgt:4,int:6,awe:4,pre:3},
+        defenses:{dodge:6,parry:6,fortitude:6,will:6,toughness:0},
+        skills:[{id:'ranged_combat',name:'Poderes de Energia',ranks:6},{id:'expertise',name:'Química/Física',ranks:10}],
+        advantages:[{id:'attractive',ranks:1},{id:'power_attack',ranks:1},{id:'precise_attack',ranks:1}],
+        powers:[{id:'p1',effectId:'create',name:'Transmutação',ranks:8,modifiers:[{modId:'continuous',ranks:8}]},{id:'p2',effectId:'damage',name:'Rajada de Energia',ranks:8,modifiers:[{modId:'ranged',ranks:8}]},{id:'p3',effectId:'flight',name:'Construtos Voadores',ranks:4,modifiers:[]},{id:'p4',effectId:'protection',name:'Campo de Força',ranks:8,modifiers:[]}],
+        complications:[{name:'Poderes Restritos',desc:'Não altera matéria viva facilmente.'}]},
+    rexsplode:{np:10,characterName:'Rex Splode (Rex Sloan)',identity:'Pública',player:'',
+        attributes:{str:2,sta:3,agl:6,dex:6,fgt:6,int:1,awe:2,pre:3},
+        defenses:{dodge:6,parry:6,fortitude:5,will:6,toughness:0},
+        skills:[{id:'ranged_combat',name:'Arremesso',ranks:8},{id:'acrobatics',name:'',ranks:6},{id:'deception',name:'',ranks:6},{id:'stealth',name:'',ranks:4}],
+        advantages:[{id:'evasion',ranks:2},{id:'equipment',ranks:2},{id:'fearless',ranks:1}],
+        powers:[{id:'p1',effectId:'damage',name:'Explosão por Contato',ranks:10,modifiers:[{modId:'ranged',ranks:10},{modId:'area',ranks:10}]},{id:'p2',effectId:'protection',name:'Traje Tático',ranks:3,modifiers:[{modId:'removable',ranks:1}]}],
+        complications:[{name:'Arrogante',desc:'Age impulsivamente e fala demais.'}]},
+    robot:{np:10,characterName:'Robot (Rudy)',identity:'Secreta',player:'',
+        attributes:{str:6,sta:0,agl:2,dex:4,fgt:4,int:10,awe:4,pre:0},
+        defenses:{dodge:8,parry:4,fortitude:10,will:6,toughness:0},
+        skills:[{id:'technology',name:'',ranks:10},{id:'expertise',name:'Robótica',ranks:10},{id:'investigation',name:'',ranks:6}],
+        advantages:[{id:'eidetic_memory',ranks:1},{id:'equipment',ranks:3}],
+        powers:[{id:'p1',effectId:'protection',name:'Chassi Metálico',ranks:10,modifiers:[]},{id:'p2',effectId:'damage',name:'Armas de Energia',ranks:10,modifiers:[{modId:'ranged',ranks:10}]},{id:'p3',effectId:'flight',name:'Propulsores',ranks:5,modifiers:[]},{id:'p4',effectId:'immunity',name:'Suporte de Vida (Drone)',ranks:10,modifiers:[]}],
+        complications:[{name:'Corpo Frágil',desc:'Seu corpo real está confinado.'}]},
+    duplikate:{np:10,characterName:'Dupli-Kate (Kate Cha)',identity:'Pública',player:'',
+        attributes:{str:2,sta:2,agl:6,dex:4,fgt:10,int:1,awe:2,pre:2},
+        defenses:{dodge:8,parry:4,fortitude:6,will:6,toughness:0},
+        skills:[{id:'acrobatics',name:'',ranks:8},{id:'close_combat',name:'Artes Marciais',ranks:4},{id:'stealth',name:'',ranks:8}],
+        advantages:[{id:'evasion',ranks:2},{id:'improved_initiative',ranks:1},{id:'takedown',ranks:2}],
+        powers:[{id:'p1',effectId:'summon',name:'Clonagem Múltipla',ranks:4,modifiers:[{modId:'active',ranks:4},{modId:'multiple_minions',ranks:4}]},{id:'p2',effectId:'damage',name:'Ataque em Grupo',ranks:6,modifiers:[{modId:'multiattack',ranks:6}]}],
+        complications:[{name:'Dor Compartilhada',desc:'Sente a morte de seus clones.'}]},
+    techjacket:{np:10,characterName:'Tech Jacket (Zack Thompson)',identity:'Secreta',player:'',
+        attributes:{str:10,sta:8,agl:2,dex:4,fgt:6,int:0,awe:2,pre:1},
+        defenses:{dodge:6,parry:2,fortitude:2,will:6,toughness:0},
+        skills:[{id:'ranged_combat',name:'Lasers da Armadura',ranks:4},{id:'perception',name:'',ranks:6}],
+        advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1}],
+        powers:[{id:'p1',effectId:'protection',name:'Blindagem Tech Jacket',ranks:4,modifiers:[{modId:'impervious',ranks:10}]},{id:'p2',effectId:'damage',name:'Lasers',ranks:10,modifiers:[{modId:'ranged',ranks:10}]},{id:'p3',effectId:'flight',name:'Propulsores',ranks:10,modifiers:[]},{id:'p4',effectId:'immunity',name:'Suporte de Vida',ranks:10,modifiers:[]}],
+        complications:[{name:'Dispositivo Preso',desc:'A armadura não pode ser removida.'}]},
+    // INVINCIBLE UNIVERSE ADDITIONS
+    monster_girl: {
+      np:10, characterName:'Monster Girl (Amanda)', identity:'Pública', player:'',
+      attributes:{str:10,sta:10,agl:2,dex:2,fgt:8,int:2,awe:2,pre:2},
+      defenses:{dodge:6,parry:2,fortitude:0,will:8,toughness:0},
+      skills:[{id:'acrobatics',name:'',ranks:4},{id:'intimidation',name:'',ranks:6},{id:'expertise',name:'Magia',ranks:4}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1},{id:'fearless',ranks:1},{id:'takedown',ranks:2}],
+      powers:[
+        {id:'p1',effectId:'growth',name:'Forma Monstruosa',ranks:4,modifiers:[]},
+        {id:'p2',effectId:'regeneration',name:'Regeneração Acelerada',ranks:8,modifiers:[]},
+        {id:'p3',effectId:'impervious_toughness',name:'Pele Espessa',ranks:8,modifiers:[]}
+      ],
+      complications:[{name:'Maldição',desc:'Fica mais velha a cada vez que usa o poder.'},{name:'Relacionamentos',desc:'Kirkman, equipe Guardians.'}]
+    },
+    black_samson: {
+      np:10, characterName:'Black Samson', identity:'Pública', player:'',
+      attributes:{str:8,sta:8,agl:2,dex:4,fgt:8,int:2,awe:2,pre:4},
+      defenses:{dodge:6,parry:2,fortitude:2,will:6,toughness:0},
+      skills:[{id:'intimidation',name:'',ranks:6},{id:'athletics',name:'',ranks:6},{id:'close_combat',name:'Desarmado',ranks:4}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1},{id:'fearless',ranks:1},{id:'improved_initiative',ranks:1},{id:'takedown',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'damage',name:'Raio de Energia',ranks:10,modifiers:[{modId:'ranged',ranks:10}]},
+        {id:'p2',effectId:'protection',name:'Força Vital',ranks:8,modifiers:[]},
+        {id:'p3',effectId:'flight',name:'Voo',ranks:6,modifiers:[]},
+        {id:'p4',effectId:'immunity',name:'Suporte de Vida',ranks:5,modifiers:[]}
+      ],
+      complications:[{name:'Motivação: Proteger os Fracos',desc:'Código de herói rígido.'},{name:'Rivalidade',desc:'Sempre em comparação com outros tijolos.'}]
+    },
+    bulletproof: {
+      np:10, characterName:'Bulletproof (Zandale Randolph)', identity:'Secreta', player:'',
+      attributes:{str:10,sta:10,agl:4,dex:2,fgt:8,int:1,awe:2,pre:2},
+      defenses:{dodge:6,parry:2,fortitude:0,will:6,toughness:0},
+      skills:[{id:'athletics',name:'',ranks:6},{id:'close_combat',name:'Desarmado',ranks:4},{id:'perception',name:'',ranks:4},{id:'persuasion',name:'',ranks:4}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1},{id:'move_by_action',ranks:1},{id:'improved_initiative',ranks:1},{id:'interpose',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'flight',name:'Voo Viltrumita',ranks:8,modifiers:[]},
+        {id:'p2',effectId:'impervious_toughness',name:'Resistência Viltrumita',ranks:10,modifiers:[]},
+        {id:'p3',effectId:'immunity',name:'Suporte de Vida',ranks:10,modifiers:[]}
+      ],
+      complications:[{name:'Motivação: Superar o pai',desc:'Vive à sombra de Invencível.'},{name:'Identidade Dupla',desc:'Vida universitária vs herói.'}]
+    },
+    battle_beast: {
+      np:10, characterName:'Battle Beast', identity:'Pública', player:'',
+      attributes:{str:14,sta:12,agl:2,dex:2,fgt:10,int:1,awe:2,pre:2},
+      defenses:{dodge:4,parry:0,fortitude:0,will:4,toughness:0},
+      skills:[{id:'intimidation',name:'',ranks:8},{id:'athletics',name:'',ranks:6},{id:'close_combat',name:'Machado de Guerra',ranks:4}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1},{id:'fearless',ranks:1},{id:'improved_critical',ranks:2},{id:'extraordinary_effort',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'impervious_toughness',name:'Pele de Pedra',ranks:12,modifiers:[]},
+        {id:'p2',effectId:'immunity',name:'Suporte de Vida',ranks:10,modifiers:[]},
+        {id:'p3',effectId:'regeneration',name:'Regeneração de Batalha',ranks:5,modifiers:[]}
+      ],
+      complications:[{name:'Motivação: Glória em Combate',desc:'Só vive para lutar contra oponentes dignos.'},{name:'Berserker',desc:'Não para até o inimigo estar morto.'}]
+    },
+    thragg: {
+      np:10, characterName:'Thragg (Vilão)', identity:'Pública', player:'',
+      attributes:{str:12,sta:12,agl:2,dex:2,fgt:10,int:4,awe:2,pre:4},
+      defenses:{dodge:2,parry:0,fortitude:0,will:4,toughness:0},
+      skills:[{id:'intimidation',name:'',ranks:8},{id:'expertise',name:'Táticas Viltrumitas',ranks:8}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1},{id:'takedown',ranks:2},{id:'fearless',ranks:1},{id:'assessment',ranks:1},{id:'extraordinary_effort',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'flight',name:'Voo Viltrumita Superior',ranks:12,modifiers:[]},
+        {id:'p2',effectId:'immunity',name:'Fisiologia Viltrumita',ranks:10,modifiers:[]}
+      ],
+      complications:[{name:'Motivação: Domínio Viltrumita',desc:'Construir um novo Império.'},{name:'Crueldade',desc:'Não tem misericórdia, mesmo com os seus.'}]
+    },
+    conquest: {
+      np:10, characterName:'Conquest (Vilão)', identity:'Pública', player:'',
+      attributes:{str:12,sta:12,agl:2,dex:2,fgt:10,int:2,awe:2,pre:2},
+      defenses:{dodge:4,parry:0,fortitude:0,will:6,toughness:0},
+      skills:[{id:'intimidation',name:'',ranks:8},{id:'close_combat',name:'Desarmado',ranks:4}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1},{id:'takedown',ranks:2},{id:'fearless',ranks:1},{id:'improved_critical',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'flight',name:'Voo Viltrumita',ranks:10,modifiers:[]},
+        {id:'p2',effectId:'immunity',name:'Fisiologia Viltrumita',ranks:10,modifiers:[]},
+        {id:'p3',effectId:'impervious_toughness',name:'Veterano de Guerras',ranks:10,modifiers:[]}
+      ],
+      complications:[{name:'Braço Prostético',desc:'Perdeu o braço para Invencível — ódio profundo.'},{name:'Motivação: Conquista',desc:'Subjugar planetas para o Império.'}]
+    },
+    cecil: {
+      np:10, characterName:'Cecil Stedman', identity:'Secreta', player:'',
+      attributes:{str:1,sta:2,agl:2,dex:4,fgt:4,int:10,awe:6,pre:6},
+      defenses:{dodge:6,parry:6,fortitude:6,will:4,toughness:0},
+      skills:[{id:'investigation',name:'',ranks:10},{id:'deception',name:'',ranks:10},{id:'intimidation',name:'',ranks:8},{id:'persuasion',name:'',ranks:6},{id:'technology',name:'',ranks:8},{id:'expertise',name:'Espionagem',ranks:10}],
+      advantages:[{id:'assessment',ranks:1},{id:'eidetic_memory',ranks:1},{id:'benefit',ranks:3},{id:'equipment',ranks:4}],
+      powers:[
+        {id:'p1',effectId:'teleport',name:'Teletransporte Pessoal de Cecil',ranks:8,modifiers:[{modId:'removable',ranks:1}]},
+        {id:'p2',effectId:'immunity',name:'Implantes de Sobrevivência',ranks:5,modifiers:[]}
+      ],
+      complications:[{name:'Motivação: Segurança da Terra',desc:'Faz o que for necessário.'},{name:'Agente Duplo',desc:'Suas lealdades são sempre questionáveis.'}]
+    },
+    darkwing: {
+      np:10, characterName:'Darkwing II', identity:'Secreta', player:'',
+      attributes:{str:2,sta:3,agl:8,dex:6,fgt:8,int:4,awe:4,pre:2},
+      defenses:{dodge:4,parry:2,fortitude:5,will:6,toughness:0},
+      skills:[{id:'acrobatics',name:'',ranks:8},{id:'stealth',name:'',ranks:10},{id:'investigation',name:'',ranks:6},{id:'close_combat',name:'Artes Marciais',ranks:4},{id:'intimidation',name:'',ranks:8}],
+      advantages:[{id:'equipment',ranks:4},{id:'improved_initiative',ranks:1},{id:'move_by_action',ranks:1},{id:'uncanny_dodge',ranks:1},{id:'evasion',ranks:2},{id:'improved_critical',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'concealment',name:'Camuflagem nas Sombras',ranks:4,modifiers:[]},
+        {id:'p2',effectId:'senses',name:'Visão Noturna',ranks:2,modifiers:[]},
+        {id:'p3',effectId:'movement',name:'Planar pelas sombras',ranks:4,modifiers:[{modId:'removable',ranks:1}]}
+      ],
+      complications:[{name:'Sombrio',desc:'Violento, cruza linhas que outros heróis não cruzariam.'},{name:'Identidade',desc:'Sucessor do Darkwing original — grandes expectativas.'}]
+    },
+    shrinking_rae: {
+      np:10, characterName:'Shrinking Rae', identity:'Pública', player:'',
+      attributes:{str:0,sta:2,agl:8,dex:8,fgt:4,int:2,awe:4,pre:3},
+      defenses:{dodge:6,parry:6,fortitude:6,will:6,toughness:0},
+      skills:[{id:'acrobatics',name:'',ranks:10},{id:'stealth',name:'',ranks:10},{id:'perception',name:'',ranks:6},{id:'athletics',name:'',ranks:4}],
+      advantages:[{id:'evasion',ranks:2},{id:'improved_initiative',ranks:2},{id:'move_by_action',ranks:1},{id:'uncanny_dodge',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'shrinking',name:'Miniaturização',ranks:8,modifiers:[{modId:'continuous',ranks:8}]},
+        {id:'p2',effectId:'flight',name:'Asas Diminutas',ranks:4,modifiers:[]},
+        {id:'p3',effectId:'damage',name:'Tiro de Energia Concentrado',ranks:6,modifiers:[{modId:'ranged',ranks:6}]}
+      ],
+      complications:[{name:'Tamanho Reduzido',desc:'Vulnerável a ser pisoteada ou não ser vista.'},{name:'Relacionamentos',desc:'Equipe de heróis, familia.'}]
+    },
+    mauler_twin: {
+      np:10, characterName:'Mauler Twin', identity:'Pública', player:'',
+      attributes:{str:12,sta:10,agl:2,dex:2,fgt:8,int:6,awe:2,pre:2},
+      defenses:{dodge:4,parry:2,fortitude:0,will:4,toughness:0},
+      skills:[{id:'technology',name:'',ranks:10},{id:'expertise',name:'Genética de Clones',ranks:10},{id:'close_combat',name:'Desarmado',ranks:4}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1},{id:'eidetic_memory',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'impervious_toughness',name:'Pele de Aço',ranks:10,modifiers:[]},
+        {id:'p2',effectId:'protection',name:'Força Bruta',ranks:8,modifiers:[]},
+        {id:'p3',effectId:'immunity',name:'Resistência Genética',ranks:5,modifiers:[]},
+        {id:'p4',effectId:'leaping',name:'Salto Ampliado',ranks:4,modifiers:[]}
+      ],
+      complications:[{name:'Clone',desc:'Eles mesmos debatem qual é o original.'},{name:'Criminoso Habitual',desc:'Fichados e conhecidos pelas autoridades.'}]
+    },
+    spider_man: {
+      np:10, characterName:'Homem-Aranha (Peter Parker)', identity:'Secreta', player:'',
+      attributes:{str:5,sta:5,agl:10,dex:4,fgt:8,int:5,awe:6,pre:2},
+      defenses:{dodge:0,parry:0,fortitude:3,will:4,toughness:0},
+      skills:[{id:'acrobatics',name:'',ranks:6},{id:'athletics',name:'',ranks:4},{id:'stealth',name:'',ranks:4},{id:'perception',name:'',ranks:4},{id:'technology',name:'',ranks:6},{id:'expertise',name:'Ciência',ranks:6}],
+      advantages:[{id:'evasion',ranks:2},{id:'uncanny_dodge',ranks:1},{id:'move_by_action',ranks:1},{id:'improved_initiative',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'senses',name:'Sentido de Aranha',ranks:3,modifiers:[]},
+        {id:'p2',effectId:'affliction',name:'Teia (Preso)',ranks:8,modifiers:[{modId:'ranged',ranks:8}]},
+        {id:'p3',effectId:'movement',name:'Escalar Paredes',ranks:2,modifiers:[]},
+        {id:'p4',effectId:'protection',name:'Traje Resistente',ranks:5,modifiers:[{modId:'removable',ranks:1}]}
+      ],
+      complications:[{name:'Identidade Secreta',desc:'Proteger tia May e MJ.'},{name:'Responsabilidade',desc:'Grande poder exige grande responsabilidade.'}]
+    },
+    iron_man: {
+      np:10, characterName:'Homem de Ferro (Tony Stark)', identity:'Pública', player:'',
+      attributes:{str:0,sta:2,agl:2,dex:4,fgt:4,int:10,awe:4,pre:6},
+      defenses:{dodge:4,parry:4,fortitude:6,will:6,toughness:0},
+      skills:[{id:'technology',name:'',ranks:10},{id:'expertise',name:'Engenharia',ranks:10},{id:'persuasion',name:'',ranks:8},{id:'investigation',name:'',ranks:6}],
+      advantages:[{id:'eidetic_memory',ranks:1},{id:'assessment',ranks:1},{id:'benefit',ranks:3},{id:'equipment',ranks:2}],
+      powers:[
+        {id:'p1',effectId:'protection',name:'Armadura Stark',ranks:10,modifiers:[{modId:'impervious',ranks:10},{modId:'removable',ranks:1}]},
+        {id:'p2',effectId:'damage',name:'Repulsores',ranks:10,modifiers:[{modId:'ranged',ranks:10},{modId:'removable',ranks:1}]},
+        {id:'p3',effectId:'flight',name:'Propulsores',ranks:8,modifiers:[{modId:'removable',ranks:1}]},
+        {id:'p4',effectId:'immunity',name:'Suporte de Vida da Armadura',ranks:10,modifiers:[{modId:'removable',ranks:1}]}
+      ],
+      complications:[{name:'Armadura Removível',desc:'A armadura pode ser hackeada ou roubada.'},{name:'Ego',desc:'Confiante ao extremo, frequentemente age sozinho.'}]
+    },
+    captain_america: {
+      np:10, characterName:'Capitão América (Steve Rogers)', identity:'Pública', player:'',
+      attributes:{str:4,sta:4,agl:6,dex:6,fgt:8,int:4,awe:4,pre:6},
+      defenses:{dodge:4,parry:2,fortitude:4,will:6,toughness:0},
+      skills:[{id:'athletics',name:'',ranks:8},{id:'acrobatics',name:'',ranks:6},{id:'insight',name:'',ranks:6},{id:'persuasion',name:'',ranks:6},{id:'close_combat',name:'Escudo/Desarmado',ranks:4}],
+      advantages:[{id:'assessment',ranks:1},{id:'benefit',ranks:1},{id:'leadership',pt:'Liderança',en:'Leadership',ranks:1},{id:'move_by_action',ranks:1},{id:'uncanny_dodge',ranks:1},{id:'evasion',ranks:2},{id:'ranged_attack',ranks:2}],
+      powers:[
+        {id:'p1',effectId:'protection',name:'Super-Soldado',ranks:4,modifiers:[]},
+        {id:'p2',effectId:'damage',name:'Golpe de Escudo',ranks:8,modifiers:[{modId:'ranged',ranks:8},{modId:'alternate_effect',ranks:1}]},
+        {id:'p3',effectId:'immunity',name:'Super-Metabolismo',ranks:5,modifiers:[]}
+      ],
+      complications:[{name:'Motivação: Liberdade e Justiça',desc:'Nunca compromete seus valores.'},{name:'Homem fora do Tempo',desc:'Vem dos anos 40, às vezes não entende o mundo moderno.'}]
+    },
+    thor: {
+      np:10, characterName:'Thor Odinson', identity:'Pública', player:'',
+      attributes:{str:12,sta:12,agl:2,dex:2,fgt:8,int:2,awe:4,pre:6},
+      defenses:{dodge:4,parry:2,fortitude:0,will:6,toughness:0},
+      skills:[{id:'intimidation',name:'',ranks:6},{id:'athletics',name:'',ranks:4},{id:'expertise',name:'Mitologia Nórdica',ranks:6}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1},{id:'fearless',ranks:1},{id:'improved_critical',ranks:1},{id:'move_by_action',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'damage',name:'Mjolnir',ranks:10,modifiers:[{modId:'ranged',ranks:10},{modId:'penetrating',ranks:1}]},
+        {id:'p2',effectId:'flight',name:'Voar com Mjolnir',ranks:6,modifiers:[]},
+        {id:'p3',effectId:'immunity',name:'Resistência Asgardiana',ranks:10,modifiers:[]}
+      ],
+      complications:[{name:'Código de Honra',desc:'Luta com honra, mesmo contra inimigos.'},{name:'Arrogância',desc:'Filho de Odin — confiante ao extremo.'}]
+    },
+    hulk: {
+      np:10, characterName:'Hulk (Bruce Banner - Médio)', identity:'Pública', player:'',
+      attributes:{str:14,sta:14,agl:1,dex:1,fgt:8,int:0,awe:2,pre:2},
+      defenses:{dodge:2,parry:2,fortitude:0,will:4,toughness:0},
+      skills:[{id:'athletics',name:'',ranks:6},{id:'intimidation',name:'',ranks:10},{id:'close_combat',name:'Desarmado',ranks:4}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1},{id:'fearless',ranks:1},{id:'improved_critical',ranks:1},{id:'takedown',ranks:2}],
+      powers:[
+        {id:'p1',effectId:'leaping',name:'Salto de Hulk',ranks:8,modifiers:[]},
+        {id:'p2',effectId:'impervious_toughness',name:'Pele Verde Invulnerável',ranks:14,modifiers:[]},
+        {id:'p3',effectId:'regeneration',name:'Regeneração Hulk',ranks:8,modifiers:[]},
+        {id:'p4',effectId:'immunity',name:'Resistência Gamma',ranks:5,modifiers:[]}
+      ],
+      complications:[{name:'Raiva de Banner',desc:'Hulk fica mais forte à medida que fica com raiva.'},{name:'Identidade Dupla',desc:'Banner e Hulk frequentemente em conflito.'}]
+    },
+    wolverine: {
+      np:10, characterName:'Wolverine (Logan/James Howlett)', identity:'Pública', player:'',
+      attributes:{str:4,sta:6,agl:6,dex:4,fgt:10,int:2,awe:4,pre:2},
+      defenses:{dodge:6,parry:2,fortitude:2,will:6,toughness:0},
+      skills:[{id:'acrobatics',name:'',ranks:4},{id:'athletics',name:'',ranks:4},{id:'intimidation',name:'',ranks:8},{id:'stealth',name:'',ranks:6},{id:'close_combat',name:'Garras de Adamantium',ranks:4},{id:'expertise',name:'Sobrevivência',ranks:6}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'fearless',ranks:1},{id:'improved_initiative',ranks:1},{id:'takedown',ranks:2},{id:'uncanny_dodge',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'damage',name:'Garras de Adamantium',ranks:6,modifiers:[{modId:'penetrating',ranks:1}]},
+        {id:'p2',effectId:'regeneration',name:'Fator de Cura',ranks:10,modifiers:[]},
+        {id:'p3',effectId:'impervious_toughness',name:'Esqueleto de Adamantium',ranks:8,modifiers:[]},
+        {id:'p4',effectId:'immunity',name:'Resistência a Venenos/Doenças',ranks:5,modifiers:[]}
+      ],
+      complications:[{name:'Berserker',desc:'Em situações extremas pode perder o controle.'},{name:'Passado',desc:'Memórias fragmentadas e manipuladas.'}]
+    },
+    storm: {
+      np:10, characterName:'Tempestade (Ororo Munroe)', identity:'Pública', player:'',
+      attributes:{str:1,sta:2,agl:4,dex:4,fgt:4,int:3,awe:6,pre:8},
+      defenses:{dodge:6,parry:6,fortitude:6,will:4,toughness:0},
+      skills:[{id:'ranged_combat',name:'Poderes Climáticos',ranks:4},{id:'persuasion',name:'',ranks:8},{id:'expertise',name:'Meteorologia',ranks:8},{id:'acrobatics',name:'',ranks:4}],
+      advantages:[{id:'attractive',ranks:1},{id:'assessment',ranks:1},{id:'fearless',ranks:1},{id:'move_by_action',ranks:1},{id:'precise_attack',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'damage',name:'Raio',ranks:10,modifiers:[{modId:'ranged',ranks:10},{modId:'area',ranks:10}]},
+        {id:'p2',effectId:'flight',name:'Controle do Vento',ranks:6,modifiers:[]},
+        {id:'p3',effectId:'environment',name:'Tempestade',ranks:4,modifiers:[]},
+        {id:'p4',effectId:'immunity',name:'Imunidade Climática',ranks:2,modifiers:[]}
+      ],
+      complications:[{name:'Claustrofobia',desc:'Em espaços fechados perde acesso total aos poderes.'},{name:'Motivação: Liberdade dos Mutantes',desc:'Luta pelos direitos mutantes.'}]
+    },
+    cyclops: {
+      np:10, characterName:'Ciclope (Scott Summers)', identity:'Pública', player:'',
+      attributes:{str:3,sta:3,agl:4,dex:6,fgt:6,int:4,awe:4,pre:4},
+      defenses:{dodge:6,parry:4,fortitude:5,will:6,toughness:0},
+      skills:[{id:'ranged_combat',name:'Raio Óptico',ranks:8},{id:'persuasion',name:'',ranks:6},{id:'insight',name:'',ranks:6},{id:'expertise',name:'Táticas',ranks:8}],
+      advantages:[{id:'assessment',ranks:1},{id:'improved_critical',ranks:1},{id:'precise_attack',ranks:1},{id:'leadership',pt:'Liderança',en:'Leadership',ranks:1},{id:'benefit',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'damage',name:'Raio Óptico',ranks:10,modifiers:[{modId:'ranged',ranks:10},{modId:'penetrating',ranks:1}]},
+        {id:'p2',effectId:'protection',name:'Visor de Rubi',ranks:6,modifiers:[{modId:'removable',ranks:1}]},
+        {id:'p3',effectId:'immunity',name:'Imunidade ao próprio Raio',ranks:2,modifiers:[]}
+      ],
+      complications:[{name:'Óculos de Rubi',desc:'Sem o visor, não consegue controlar o poder — tudo se destrói.'},{name:'Liderança',desc:'O peso de liderar a equipe.'}]
+    },
+    magneto: {
+      np:10, characterName:'Magneto (Erik Lehnsherr)', identity:'Pública', player:'',
+      attributes:{str:1,sta:2,agl:2,dex:4,fgt:4,int:8,awe:6,pre:8},
+      defenses:{dodge:6,parry:6,fortitude:6,will:4,toughness:0},
+      skills:[{id:'ranged_combat',name:'Magnetismo',ranks:4},{id:'intimidation',name:'',ranks:10},{id:'persuasion',name:'',ranks:8},{id:'expertise',name:'Física do Magnetismo',ranks:10}],
+      advantages:[{id:'assessment',ranks:1},{id:'fearless',ranks:1},{id:'benefit',ranks:2}],
+      powers:[
+        {id:'p1',effectId:'move_object',name:'Manipulação Magnética',ranks:10,modifiers:[{modId:'ranged',ranks:10}]},
+        {id:'p2',effectId:'flight',name:'Campo Magnético Pessoal',ranks:6,modifiers:[]},
+        {id:'p3',effectId:'protection',name:'Escudo Eletromagnético',ranks:8,modifiers:[{modId:'continuous',ranks:8}]},
+        {id:'p4',effectId:'affliction',name:'Campo de Imobilização',ranks:6,modifiers:[{modId:'ranged',ranks:6},{modId:'area',ranks:6}]}
+      ],
+      complications:[{name:'Motivação: Supremacia Mutante',desc:'A humanidade ameaça os mutantes — deve agir primeiro.'},{name:'Holocausto',desc:'Sobrevivente do Holocausto — trauma profundo moldou a visão de mundo.'}]
+    },
+    doctor_strange: {
+      np:10, characterName:'Doutor Estranho (Stephen Strange)', identity:'Pública', player:'',
+      attributes:{str:1,sta:2,agl:2,dex:4,fgt:4,int:6,awe:8,pre:6},
+      defenses:{dodge:6,parry:6,fortitude:6,will:2,toughness:0},
+      skills:[{id:'expertise',name:'Artes Místicas',ranks:10},{id:'insight',name:'',ranks:6},{id:'persuasion',name:'',ranks:6},{id:'investigation',name:'',ranks:6}],
+      advantages:[{id:'assessment',ranks:1},{id:'fearless',ranks:1},{id:'eidetic_memory',ranks:1},{id:'benefit',ranks:2}],
+      powers:[
+        {id:'p1',effectId:'damage',name:'Raios Místicos',ranks:10,modifiers:[{modId:'ranged',ranks:10}]},
+        {id:'p2',effectId:'flight',name:'Capa Levitação',ranks:6,modifiers:[{modId:'removable',ranks:1}]},
+        {id:'p3',effectId:'create',name:'Construtos Místicos',ranks:6,modifiers:[]},
+        {id:'p4',effectId:'nullify',name:'Supressão Mágica',ranks:6,modifiers:[{modId:'ranged',ranks:6}]},
+        {id:'p5',effectId:'immunity',name:'Resistência Mística',ranks:5,modifiers:[]}
+      ],
+      complications:[{name:'Mãos Danificadas',desc:'Tremor nas mãos — não pode mais realizar cirurgias.'},{name:'Responsabilidade',desc:'Único Feiticeiro Supremo da Terra.'}]
+    },
+    deadpool: {
+      np:10, characterName:'Deadpool (Wade Wilson)', identity:'Pública', player:'',
+      attributes:{str:3,sta:3,agl:8,dex:8,fgt:8,int:2,awe:2,pre:4},
+      defenses:{dodge:4,parry:2,fortitude:5,will:4,toughness:0},
+      skills:[{id:'acrobatics',name:'',ranks:6},{id:'close_combat',name:'Katanas/Desarmado',ranks:4},{id:'ranged_combat',name:'Pistolas',ranks:4},{id:'deception',name:'',ranks:8},{id:'intimidation',name:'',ranks:6},{id:'stealth',name:'',ranks:4}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1},{id:'evasion',ranks:2},{id:'uncanny_dodge',ranks:1},{id:'move_by_action',ranks:1},{id:'improved_critical',ranks:2}],
+      powers:[
+        {id:'p1',effectId:'regeneration',name:'Fator de Cura Degenerado',ranks:10,modifiers:[]},
+        {id:'p2',effectId:'immunity',name:'Imunidade ao Câncer/Doenças',ranks:5,modifiers:[]},
+        {id:'p3',effectId:'damage',name:'Katanas de Vibranium',ranks:6,modifiers:[{modId:'penetrating',ranks:1}]},
+        {id:'p4',effectId:'damage',name:'Pistolas',ranks:6,modifiers:[{modId:'ranged',ranks:6},{modId:'alternate_effect',ranks:1}]}
+      ],
+      complications:[{name:'Quarto Parede',desc:'Sabe que é personagem de quadrinho.'},{name:'Instabilidade Mental',desc:'Vozes na cabeça, humor imprevisível.'}]
+    },
+    black_panther: {
+      np:10, characterName:"Pantera Negra (T'Challa)", identity:'Pública', player:'',
+      attributes:{str:4,sta:4,agl:6,dex:6,fgt:8,int:8,awe:4,pre:6},
+      defenses:{dodge:4,parry:2,fortitude:4,will:4,toughness:0},
+      skills:[{id:'acrobatics',name:'',ranks:4},{id:'athletics',name:'',ranks:4},{id:'stealth',name:'',ranks:6},{id:'investigation',name:'',ranks:6},{id:'technology',name:'',ranks:8},{id:'expertise',name:'Vibranium',ranks:8}],
+      advantages:[{id:'assessment',ranks:1},{id:'move_by_action',ranks:1},{id:'uncanny_dodge',ranks:1},{id:'equipment',ranks:2},{id:'benefit',ranks:2}],
+      powers:[
+        {id:'p1',effectId:'protection',name:'Traje de Vibranium',ranks:8,modifiers:[{modId:'impervious',ranks:8},{modId:'removable',ranks:1}]},
+        {id:'p2',effectId:'senses',name:'Super-Sentidos da Erva',ranks:3,modifiers:[]},
+        {id:'p3',effectId:'damage',name:'Garras de Vibranium',ranks:6,modifiers:[{modId:'penetrating',ranks:1},{modId:'removable',ranks:1}]}
+      ],
+      complications:[{name:'Rei de Wakanda',desc:'Responsabilidades reais que conflitam com ser herói.'},{name:'Orgulho',desc:'Relutante a pedir ajuda de outros.'}]
+    },
+    superman: {
+      np:10, characterName:'Superman (Clark Kent)', identity:'Secreta', player:'',
+      attributes:{str:14,sta:14,agl:2,dex:2,fgt:8,int:4,awe:4,pre:6},
+      defenses:{dodge:4,parry:2,fortitude:0,will:6,toughness:0},
+      skills:[{id:'athletics',name:'',ranks:4},{id:'persuasion',name:'',ranks:6},{id:'expertise',name:'Jornalismo',ranks:4}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'power_attack',ranks:1},{id:'interpose',ranks:1},{id:'move_by_action',ranks:1},{id:'fearless',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'flight',name:'Voo Kryptoniano',ranks:10,modifiers:[]},
+        {id:'p2',effectId:'impervious_toughness',name:'Invulnerabilidade',ranks:14,modifiers:[]},
+        {id:'p3',effectId:'immunity',name:'Suporte de Vida',ranks:10,modifiers:[]},
+        {id:'p4',effectId:'damage',name:'Visão de Calor',ranks:8,modifiers:[{modId:'ranged',ranks:8}]},
+        {id:'p5',effectId:'senses',name:'Super Sentidos',ranks:5,modifiers:[]}
+      ],
+      complications:[{name:'Kryptonita',desc:'Vulnerabilidade fatal à kryptonita verde.'},{name:'Identidade Secreta',desc:'Proteger Martha Kent e os entes queridos.'}]
+    },
+    batman: {
+      np:10, characterName:'Batman (Bruce Wayne)', identity:'Secreta', player:'',
+      attributes:{str:4,sta:4,agl:6,dex:6,fgt:10,int:8,awe:4,pre:4},
+      defenses:{dodge:4,parry:0,fortitude:4,will:6,toughness:0},
+      skills:[{id:'acrobatics',name:'',ranks:6},{id:'athletics',name:'',ranks:4},{id:'investigation',name:'',ranks:10},{id:'stealth',name:'',ranks:6},{id:'intimidation',name:'',ranks:8},{id:'technology',name:'',ranks:6},{id:'expertise',name:'Criminologia',ranks:8},{id:'close_combat',name:'Artes Marciais',ranks:4}],
+      advantages:[{id:'assessment',ranks:1},{id:'eidetic_memory',ranks:1},{id:'equipment',ranks:4},{id:'uncanny_dodge',ranks:1},{id:'improved_initiative',ranks:1},{id:'move_by_action',ranks:1},{id:'fearless',ranks:1},{id:'improved_critical',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'senses',name:'Sentidos do Morcego',ranks:2,modifiers:[]},
+        {id:'p2',effectId:'movement',name:'Garra/Planar',ranks:2,modifiers:[{modId:'removable',ranks:1}]}
+      ],
+      complications:[{name:'Sem Poderes',desc:'Apenas humano — equipamentos podem ser destruídos.'},{name:'Cruzada Pessoal',desc:'Os assassinatos dos pais. Nunca usa armas letais.'}]
+    },
+    wonder_woman: {
+      np:10, characterName:'Mulher-Maravilha (Diana Prince)', identity:'Pública', player:'',
+      attributes:{str:10,sta:10,agl:4,dex:4,fgt:10,int:4,awe:4,pre:6},
+      defenses:{dodge:4,parry:0,fortitude:0,will:6,toughness:0},
+      skills:[{id:'athletics',name:'',ranks:6},{id:'persuasion',name:'',ranks:6},{id:'expertise',name:'Mitologia Grega',ranks:6},{id:'insight',name:'',ranks:4}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'fearless',ranks:1},{id:'assessment',ranks:1},{id:'move_by_action',ranks:1},{id:'interpose',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'flight',name:'Voo Divino',ranks:6,modifiers:[]},
+        {id:'p2',effectId:'deflect',name:'Braceletes de Aegis',ranks:10,modifiers:[]},
+        {id:'p3',effectId:'immunity',name:'Benção Divina',ranks:5,modifiers:[]},
+        {id:'p4',effectId:'affliction',name:'Laço da Verdade',ranks:6,modifiers:[{modId:'ranged',ranks:6}]}
+      ],
+      complications:[{name:'Filha de Zeus',desc:'Responsabilidades olímpicas que interferem.'},{name:'Misericórdia',desc:'Prefere reformar a destruir inimigos.'}]
+    },
+    the_flash: {
+      np:10, characterName:'The Flash (Barry Allen)', identity:'Secreta', player:'',
+      attributes:{str:2,sta:4,agl:10,dex:4,fgt:4,int:4,awe:4,pre:2},
+      defenses:{dodge:0,parry:6,fortitude:4,will:6,toughness:0},
+      skills:[{id:'acrobatics',name:'',ranks:6},{id:'athletics',name:'',ranks:6},{id:'perception',name:'',ranks:6},{id:'expertise',name:'Química Forense',ranks:8}],
+      advantages:[{id:'improved_initiative',ranks:4},{id:'evasion',ranks:2},{id:'move_by_action',ranks:1},{id:'uncanny_dodge',ranks:1},{id:'extraordinary_effort',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'speed',name:'Força de Aceleração',ranks:14,modifiers:[]},
+        {id:'p2',effectId:'quickness',name:'Velocidade de Processamento',ranks:8,modifiers:[]},
+        {id:'p3',effectId:'damage',name:'Soco de Velocidade',ranks:6,modifiers:[{modId:'multiattack',ranks:6}]},
+        {id:'p4',effectId:'immunity',name:'Fricção e Velocidade',ranks:3,modifiers:[]}
+      ],
+      complications:[{name:'Velocidade Viciante',desc:'Difícil desacelerar — ansiedade quando parado.'},{name:'Tragédia',desc:'Mãe morta, pai preso injustamente.'}]
+    },
+    green_lantern: {
+      np:10, characterName:'Lanterna Verde (Hal Jordan)', identity:'Secreta', player:'',
+      attributes:{str:2,sta:4,agl:4,dex:4,fgt:6,int:4,awe:4,pre:6},
+      defenses:{dodge:6,parry:4,fortitude:4,will:6,toughness:0},
+      skills:[{id:'ranged_combat',name:'Anel de Poder',ranks:4},{id:'vehicles',name:'',ranks:8},{id:'expertise',name:'Pilotagem de Combate',ranks:8},{id:'athletics',name:'',ranks:4}],
+      advantages:[{id:'fearless',ranks:1},{id:'assessment',ranks:1},{id:'move_by_action',ranks:1},{id:'improved_initiative',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'create',name:'Construtos de Luz Verde',ranks:10,modifiers:[{modId:'removable',ranks:1}]},
+        {id:'p2',effectId:'damage',name:'Rajada de Energia',ranks:10,modifiers:[{modId:'ranged',ranks:10},{modId:'removable',ranks:1}]},
+        {id:'p3',effectId:'flight',name:'Voo do Anel',ranks:8,modifiers:[{modId:'removable',ranks:1}]},
+        {id:'p4',effectId:'immunity',name:'Suporte de Vida do Anel',ranks:10,modifiers:[{modId:'removable',ranks:1}]}
+      ],
+      complications:[{name:'Poder Limitado pelo Anel',desc:'O anel precisa ser recarregado na lanterna a cada 24h.'},{name:'Fraqueza: Amarelo',desc:'Anel ineficaz contra objetos amarelos.'}]
+    },
+    aquaman: {
+      np:10, characterName:'Aquaman (Arthur Curry)', identity:'Pública', player:'',
+      attributes:{str:10,sta:10,agl:4,dex:4,fgt:8,int:4,awe:4,pre:6},
+      defenses:{dodge:4,parry:2,fortitude:0,will:6,toughness:0},
+      skills:[{id:'athletics',name:'',ranks:6},{id:'persuasion',name:'',ranks:6},{id:'expertise',name:'Oceanos e Criaturas Marinhas',ranks:8}],
+      advantages:[{id:'all_out_attack',ranks:1},{id:'move_by_action',ranks:1},{id:'fearless',ranks:1},{id:'benefit',ranks:2}],
+      powers:[
+        {id:'p1',effectId:'swimming',name:'Natação Super-humana',ranks:10,modifiers:[]},
+        {id:'p2',effectId:'communication',name:'Telepatia com Vida Marinha',ranks:2,modifiers:[]},
+        {id:'p3',effectId:'immunity',name:'Pressão/Frio/Respirar Embaixo d\'água',ranks:8,modifiers:[]},
+        {id:'p4',effectId:'impervious_toughness',name:'Pele para Pressão Oceânica',ranks:8,modifiers:[]}
+      ],
+      complications:[{name:'Fora d\'Água',desc:'Perde força e desidrata fora do ambiente aquático.'},{name:'Dois Mundos',desc:'Dividido entre Atlantis e a superfície.'}]
+    },
+    cyborg: {
+      np:10, characterName:'Ciborgue (Victor Stone)', identity:'Pública', player:'',
+      attributes:{str:8,sta:0,agl:2,dex:6,fgt:6,int:8,awe:4,pre:4},
+      defenses:{dodge:6,parry:4,fortitude:10,will:6,toughness:0},
+      skills:[{id:'technology',name:'',ranks:10},{id:'ranged_combat',name:'Canhão de Sônica',ranks:4},{id:'investigation',name:'',ranks:6},{id:'expertise',name:'Eletrônica',ranks:8}],
+      advantages:[{id:'eidetic_memory',ranks:1},{id:'assessment',ranks:1},{id:'benefit',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'damage',name:'Canhão de Plasma',ranks:10,modifiers:[{modId:'ranged',ranks:10}]},
+        {id:'p2',effectId:'protection',name:'Exo-esqueleto de Titânio',ranks:10,modifiers:[{modId:'impervious',ranks:10}]},
+        {id:'p3',effectId:'immunity',name:'Sistemas Cibernéticos',ranks:10,modifiers:[]},
+        {id:'p4',effectId:'flight',name:'Propulsores',ranks:4,modifiers:[]}
+      ],
+      complications:[{name:'Corpo Cibernético',desc:'Percepcionado como máquina, não como humano.'},{name:'Conflito de Identidade',desc:'Quanto de si ainda é humano?'}]
+    },
+    green_arrow: {
+      np:10, characterName:'Arqueiro Verde (Oliver Queen)', identity:'Secreta', player:'',
+      attributes:{str:3,sta:3,agl:6,dex:10,fgt:6,int:4,awe:4,pre:4},
+      defenses:{dodge:6,parry:4,fortitude:5,will:6,toughness:0},
+      skills:[{id:'ranged_combat',name:'Arco e Flecha',ranks:8},{id:'acrobatics',name:'',ranks:6},{id:'stealth',name:'',ranks:6},{id:'athletics',name:'',ranks:6},{id:'insight',name:'',ranks:4}],
+      advantages:[{id:'precise_attack',ranks:1},{id:'improved_critical',ranks:2},{id:'equipment',ranks:4},{id:'move_by_action',ranks:1},{id:'evasion',ranks:1},{id:'uncanny_dodge',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'damage',name:'Flecha de Explosão',ranks:8,modifiers:[{modId:'ranged',ranks:8},{modId:'area',ranks:8},{modId:'removable',ranks:1}]},
+        {id:'p2',effectId:'affliction',name:'Flecha de Paralisação',ranks:8,modifiers:[{modId:'ranged',ranks:8},{modId:'alternate_effect',ranks:1}]}
+      ],
+      complications:[{name:'Flecha Verde sem Poderes',desc:'Apenas habilidades, equipamento pode ser destruído.'},{name:'Política',desc:'Ideológico — conflitos com outros heróis.'}]
+    },
+    zatanna: {
+      np:10, characterName:'Zatanna (Zatanna Zatara)', identity:'Pública', player:'',
+      attributes:{str:1,sta:2,agl:4,dex:4,fgt:4,int:6,awe:8,pre:8},
+      defenses:{dodge:6,parry:6,fortitude:6,will:2,toughness:0},
+      skills:[{id:'persuasion',name:'',ranks:8},{id:'deception',name:'',ranks:4},{id:'expertise',name:'Artes Místicas',ranks:10},{id:'ranged_combat',name:'Magia',ranks:4}],
+      advantages:[{id:'assessment',ranks:1},{id:'fearless',ranks:1},{id:'attractive',ranks:1},{id:'eidetic_memory',ranks:1}],
+      powers:[
+        {id:'p1',effectId:'affliction',name:'Magia de Controle',ranks:8,modifiers:[{modId:'ranged',ranks:8}]},
+        {id:'p2',effectId:'transform',name:'Transmutação',ranks:6,modifiers:[{modId:'ranged',ranks:6}]},
+        {id:'p3',effectId:'nullify',name:'Anti-Magia',ranks:6,modifiers:[{modId:'ranged',ranks:6}]},
+        {id:'p4',effectId:'protection',name:'Escudo Mágico',ranks:6,modifiers:[]}
+      ],
+      complications:[{name:'Magia por Palavras',desc:'Precisa falar de trás para frente para usar magia — silêncio/mordaça a desativa.'},{name:'Responsabilidade',desc:'Guardiã de segredos ocultos do mundo.'}]
+    }
+
+};
+
+function loadArchetype(val) {
+    if (!val) { state={np:10,characterName:'',identity:'',player:'',complications:[],attributes:{str:0,sta:0,agl:0,dex:0,fgt:0,int:0,awe:0,pre:0},defenses:{dodge:0,parry:0,fortitude:0,will:0,toughness:0},skills:[],advantages:[],powers:[]}; initBaseSkills(); renderAll(); return; }
+    if (archetypes[val] && confirm('Substituir a ficha atual?')) { state=JSON.parse(JSON.stringify(archetypes[val])); initBaseSkills(); renderAll(); }
+}
+
+/* ===== CORE ===== */
+function updateState(k,v){state[k]=v;}
+function updateAttr(id,v){state.attributes[id]=parseInt(v)||0;renderAll();}
+function updateDef(id,v){state.defenses[id]=parseInt(v)||0;renderAll();}
+function getAttr(id){return state.attributes[id]||0;}
+
+function calcCosts() {
+    let a=Object.values(state.attributes).reduce((s,v)=>s+(v*2),0);
+    let d=Object.values(state.defenses).reduce((s,v)=>s+v,0);
+    let sk=Math.ceil(state.skills.reduce((s,v)=>s+v.ranks,0)*0.5);
+    let adv=state.advantages.reduce((s,v)=>s+v.ranks,0);
+    let pw=state.powers.reduce((s,p)=>s+calcPowerCost(p),0);
+    return {a,d,sk,adv,pw};
+}
+
+function calcPowerCost(p) {
+    let eff=dictEffects.find(e=>e.id===p.effectId); if(!eff)return 0;
+    let baseFlat=eff.type==='flat'?(eff.cost*p.ranks):0;
+    let baseRank=eff.type==='per_rank'?(eff.cost*p.ranks):0;
+    let modFlat=0; let isRem=false,isEasyRem=false;
+    p.modifiers.forEach(m=>{
+        let md=dictModifiers.find(x=>x.id===m.modId); if(!md)return;
+        if(md.type==='removable')isRem=true;
+        else if(md.type==='easily_removable')isEasyRem=true;
+        else if(md.type==='flat')modFlat+=md.cost*m.ranks;
+        else if(md.type==='per_rank')modFlat+=md.cost*m.ranks;
+    });
+    let sub=baseFlat+baseRank+modFlat; if(sub<1)sub=1;
+    if(isEasyRem)sub-=Math.ceil(sub/5)*2;
+    else if(isRem)sub-=Math.ceil(sub/5);
+    return Math.max(1,sub);
+}
+
+let currentTab='tab-base';
+
+function switchTab(id,btn) {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+    if(btn)btn.classList.add('active'); else document.querySelector(`.tab[onclick*="${id}"]`)?.classList.add('active');
+    document.getElementById(id).classList.add('active');
+    currentTab=id;
+    // update help drawer content
+    document.getElementById('helpTitle').textContent=(helpSections[id]?.title)||'Regras';
+    document.getElementById('helpBody').innerHTML=buildHelp(id);
+}
+
+function toggleHelp() {
+    const d=document.getElementById('helpDrawer'); d.classList.toggle('open');
+    // Make sure content is set
+    document.getElementById('helpTitle').textContent=(helpSections[currentTab]?.title)||'Regras';
+    document.getElementById('helpBody').innerHTML=buildHelp(currentTab);
+}
+
+function toggleSidebar() {
+    const s=document.getElementById('mainSidebar');
+    const o=document.getElementById('sidebarOverlay');
+    s.classList.toggle('mobile-open');
+    o.classList.toggle('open');
+}
+
+function syncPrintHeader() {
+    document.getElementById('ph-name').textContent=state.characterName||'Sem Nome';
+    document.getElementById('ph-id').textContent=state.identity||'—';
+    document.getElementById('ph-pl').textContent=state.player||'—';
+    const c=calcCosts(); const total=c.a+c.d+c.sk+c.adv+c.pw;
+    document.getElementById('ph-np').textContent=state.np;
+    document.getElementById('ph-pts').textContent=`${total}/${state.np*15}`;
+}
+
+
+function renderFichaView() {
+  const el = document.getElementById('ficha-view');
+  if (!el) return;
+  const np = state.np;
+  const costs = calcCosts();
+  const total = costs.a + costs.d + costs.sk + costs.adv + costs.pw;
+  const budget = np * 15;
+
+  let toughTotal = getAttr('sta') + (state.defenses.toughness || 0);
+  state.powers.forEach(p => { if (p.effectId === 'protection') toughTotal += p.ranks; });
+
+  const dodge  = getAttr('agl') + (state.defenses.dodge || 0);
+  const parry  = getAttr('fgt') + (state.defenses.parry || 0);
+  const fort   = getAttr('sta') + (state.defenses.fortitude || 0);
+  const will   = getAttr('awe') + (state.defenses.will || 0);
+  const initAdv = state.advantages.find(a => a.id === 'improved_initiative');
+  const initiative = getAttr('agl') + (initAdv ? initAdv.ranks * 4 : 0);
+  const atk_melee = getAttr('fgt') + (state.skills.find(s => s.id === 'close_combat')?.ranks || 0);
+  const atk_range = getAttr('dex') + (state.skills.find(s => s.id === 'ranged_combat')?.ranks || 0);
+
+  const overBudget = total > budget;
+
+  // Section helper
+  const section = (title, content) => `
+    <div style='margin-bottom:24px;'>
+      <div style='display:inline-block;background:var(--comic-red);color:var(--comic-yellow);font-family:"Bangers",Impact,sans-serif;font-size:1.25em;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border:2.5px solid var(--comic-black);box-shadow:var(--box-shadow-sm);margin-bottom:12px;border-radius:4px;'>${title}</div>
+      ${content}
+    </div>`;
+
+  // Combat stat box helper
+  const statBox = (label, val, sub='') => `
+    <div style='background:var(--comic-white);border:2.5px solid var(--comic-black);border-radius:6px;padding:8px 12px;text-align:center;min-width:92px;box-shadow:var(--box-shadow-sm);'>
+      <div style='font-size:1.9em;font-weight:700;color:var(--comic-red);font-family:"Bangers",Impact,sans-serif;line-height:1.1;'>${val >= 0 ? (typeof val === 'number' ? (val > 0 ? '+' : '') + val : val) : val}</div>
+      <div style='font-size:.82em;color:var(--comic-black);font-family:"Bangers",Impact,sans-serif;letter-spacing:1px;text-transform:uppercase;'>${label}</div>
+      ${sub ? `<div style='font-size:.72em;color:#666;font-weight:700;'>${sub}</div>` : ''}
+    </div>`;
+
+  // Attribute row helper
+  const attrRow = (pt, en, id) => {
+    const val = getAttr(id);
+    return `<div style='display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-bottom:1.5px dashed #ccc;font-weight:700;'>
+      <span style='color:var(--comic-black);font-family:"Bangers",Impact,sans-serif;font-size:1.15em;letter-spacing:1px;'>${pt}</span>
+      <span style='font-size:.82em;color:#666;font-style:italic;'>${en}</span>
+      <span style='font-size:1.35em;font-family:"Bangers",Impact,sans-serif;color:var(--comic-red);min-width:35px;text-align:right;'>${val >= 0 ? '+' + val : val}</span>
+    </div>`;
+  };
+
+  el.innerHTML = `
+    <!-- HERO HEADER -->
+    <div style='background:var(--comic-white);border:3.5px solid var(--comic-black);border-radius:8px;padding:18px 24px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;box-shadow:var(--box-shadow);'>
+      <div>
+        <div style='font-family:"Bangers",Impact,sans-serif;font-size:2.4em;color:var(--comic-red);letter-spacing:2px;text-transform:uppercase;line-height:1;text-shadow:1.5px 1.5px 0 #000;'>${state.characterName || 'Sem Nome'}</div>
+        <div style='color:#555;margin-top:6px;font-size:.95em;font-weight:700;'>Identidade: <b style='color:var(--comic-black);'>${state.identity || '—'}</b> &nbsp;|&nbsp; Jogador: <b style='color:var(--comic-black);'>${state.player || '—'}</b></div>
+      </div>
+      <div style='text-align:right;'>
+        <div style='font-size:.85em;font-weight:700;color:#555;text-transform:uppercase;'>Nível de Poder</div>
+        <div style='font-size:2.8em;font-family:"Bangers",Impact,sans-serif;color:var(--comic-black);line-height:1;'>NP ${np}</div>
+        <div style='font-size:.9em;background:${overBudget ? 'var(--comic-red)' : 'var(--comic-yellow)'};color:${overBudget ? '#fff' : '#000'};padding:3px 10px;border:2px solid #000;border-radius:4px;box-shadow:2px 2px 0 #000;font-weight:900;'>${total} / ${budget} pts ${overBudget ? '⚠ ACIMA DO LIMITE' : '✓ OK'}</div>
+      </div>
+    </div>
+
+    ${section('Estatísticas de Combate',
+      `<div style='display:flex;gap:10px;flex-wrap:wrap;'>
+        ${statBox('Atq. Corpo', atk_melee, 'FGT+Perícia')}
+        ${statBox('Atq. Dist.', atk_range, 'DEX+Perícia')}
+        ${statBox('Esquiva', dodge, 'AGL+Comprado')}
+        ${statBox('Aparar', parry, 'FGT+Comprado')}
+        ${statBox('Resist.', toughTotal, 'STA+Proteção')}
+        ${statBox('Fortitude', fort, 'STA+Comprado')}
+        ${statBox('Vontade', will, 'AWE+Comprado')}
+        ${statBox('Iniciativa', initiative >= 0 ? '+' + initiative : initiative, 'AGL+Vant.')}
+      </div>`
+    )}
+
+    <div style='display:grid;grid-template-columns:1fr 1fr;gap:20px;flex-wrap:wrap;'>
+      ${section('Atributos',
+        `<div style='background:var(--comic-white);border-radius:6px;overflow:hidden;border:2.5px solid var(--comic-black);box-shadow:var(--box-shadow-sm);'>
+          ${dictAttrs.map(a => attrRow(a.pt, a.en, a.id)).join('')}
+        </div>`
+      )}
+
+      ${section('Defesas',
+        `<div style='background:var(--comic-white);border-radius:6px;overflow:hidden;border:2.5px solid var(--comic-black);box-shadow:var(--box-shadow-sm);'>
+          ${dictDefenses.map(d => {
+            const base = d.isToughness ? getAttr('sta') : getAttr(d.base);
+            const bought = state.defenses[d.id] || 0;
+            const tot = d.isToughness ? toughTotal : (base + bought);
+            return `<div style='display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-bottom:1.5px dashed #ccc;font-weight:700;'>
+              <span style='color:var(--comic-black);font-family:"Bangers",Impact,sans-serif;font-size:1.15em;letter-spacing:1px;'>${d.pt}</span>
+              <span style='font-size:.82em;color:#666;font-style:italic;'>${d.en}</span>
+              <span style='font-size:1.35em;font-family:"Bangers",Impact,sans-serif;color:var(--comic-red);min-width:35px;text-align:right;'>${tot}</span>
+            </div>`;
+          }).join('')}
+        </div>`
+      )}
+    </div>
+
+    ${section('Poderes Registrados',
+      state.powers.length === 0
+        ? `<p style='color:#666;font-style:italic;font-weight:bold;'>Nenhum poder registrado ainda.</p>`
+        : `<div style='display:flex;flex-direction:column;gap:8px;'>${state.powers.map(p => {
+            const eff = dictEffects.find(e => e.id === p.effectId);
+            const cost = calcPowerCost(p);
+            const modNames = p.modifiers.map(m => { const md = dictModifiers.find(x => x.id === m.modId); return md ? md.pt : ''; }).filter(Boolean).join(', ');
+            return `<div style='background:var(--comic-white);border:2.5px solid var(--comic-black);border-left:6px solid var(--comic-yellow);border-radius:4px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;box-shadow:var(--box-shadow-sm);'>
+              <div>
+                <b style='color:var(--comic-red);font-size:1.05em;'>${p.name || 'Poder'}</b>
+                <span style='font-size:.82em;color:#444;margin-left:8px;font-weight:700;'>[${eff ? eff.pt : p.effectId}] Rank ${p.ranks}${modNames ? ' · ' + modNames : ''}</span>
+              </div>
+              <span style='font-weight:700;color:var(--comic-black);font-family:"Bangers",Impact,sans-serif;font-size:1.2em;background:var(--comic-yellow);padding:2px 8px;border:1.5px solid #000;border-radius:4px;'>${cost} pts</span>
+            </div>`;
+          }).join('')}</div>`
+    )}
+
+    <div style='display:grid;grid-template-columns:1fr 1fr;gap:20px;'>
+      ${section('Vantagens',
+        state.advantages.length === 0
+          ? `<p style='color:#666;font-style:italic;font-weight:bold;'>Nenhuma.</p>`
+          : `<div style='background:var(--comic-white);border:2.5px solid var(--comic-black);border-radius:6px;padding:8px 12px;box-shadow:var(--box-shadow-sm);'>
+              ${state.advantages.map(adv => {
+                const def = dictAdvantages.find(d => d.id === adv.id);
+                return `<div style='display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #eee;font-size:.95em;font-weight:700;'><span>${def ? def.pt : adv.id}</span><span style='color:var(--comic-red);font-family:"Bangers",Impact,sans-serif;font-size:1.1em;'>${adv.ranks}${adv.ranks > 1 ? ' ranks' : ''}</span></div>`;
+              }).join('')}
+            </div>`
+      )}
+
+      ${section('Perícias com Graduação',
+        state.skills.filter(s => s.ranks > 0).length === 0
+          ? `<p style='color:#666;font-style:italic;font-weight:bold;'>Nenhuma.</p>`
+          : `<div style='background:var(--comic-white);border:2.5px solid var(--comic-black);border-radius:6px;padding:8px 12px;box-shadow:var(--box-shadow-sm);'>
+              ${state.skills.filter(s => s.ranks > 0).map(sk => {
+                const def = dictSkills.find(d => d.id === sk.id) || { pt: sk.id, base: 'int' };
+                const total = getAttr(def.base) + sk.ranks;
+                return `<div style='display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #eee;font-size:.95em;font-weight:700;'><span>${def.pt}${sk.name ? ': ' + sk.name : ''}</span><span style='color:var(--comic-red);font-family:"Bangers",Impact,sans-serif;font-size:1.2em;'>+${total}</span></div>`;
+              }).join('')}
+            </div>`
+      )}
+    </div>
+
+    ${state.complications.length > 0 ? section('Complicações Registradas',
+      `<div style='background:var(--comic-white);border:2.5px solid var(--comic-black);border-radius:6px;padding:8px 14px;box-shadow:var(--box-shadow-sm);'>
+        <ul style='list-style:none;padding:0;'>${state.complications.map(c =>
+          `<li style='padding:6px 0;border-bottom:1px dashed #ccc;font-size:.95em;'><b style='color:var(--comic-red);font-family:"Bangers",Impact,sans-serif;font-size:1.1em;letter-spacing:1px;'>⚡ ${c.name || 'Complicação'}:</b> <span style='font-weight:700;'>${c.desc || ''}</span></li>`
+        ).join('')}</ul>
+      </div>`
+    ) : ''}
+  `;
+}
+
+/* ===== RENDER ===== */
+function renderAll() {
+    initBaseSkills();
+    document.getElementById('charName').value=state.characterName||'';
+    document.getElementById('hudNp').value=state.np;
+    document.getElementById('charIdentity').value=state.identity||'';
+    document.getElementById('charPlayer').value=state.player||'';
+    syncPrintHeader();
+
+    const c=calcCosts(); const total=c.a+c.d+c.sk+c.adv+c.pw; const lim=state.np*15;
+    const ptEl=document.getElementById('ptTotal');
+    ptEl.textContent=`${total} / ${lim}`; ptEl.className='points-big'+(total>lim?' over':'');
+    document.getElementById('ptA').textContent=c.a; document.getElementById('ptD').textContent=c.d;
+    document.getElementById('ptS').textContent=c.sk; document.getElementById('ptV').textContent=c.adv;
+    document.getElementById('ptP').textContent=c.pw;
+
+    // Complications
+    document.getElementById('complications-list').innerHTML=state.complications.map((comp,i)=>`
+        <div class="list-item">
+            <input type="text" value="${comp.name||''}" placeholder="Ex: Inimigo" style="flex:1" onchange="updateComp(${i},'name',this.value)">
+            <input type="text" value="${comp.desc||''}" placeholder="Descrição" style="flex:2" onchange="updateComp(${i},'desc',this.value)">
+            <button class="btn-danger" onclick="removeComp(${i})">✕</button>
+        </div>`).join('');
+
+    // Attributes
+    document.getElementById('attributes-grid').innerHTML=dictAttrs.map(a=>`
+        <div class="stat-card">
+            <div class="stat-card-header">
+                <div class="stat-title">${a.pt}</div>
+                <div class="stat-sub">${a.en} · 2pts/rank</div>
+            </div>
+            <div class="stat-input"><input type="number" value="${getAttr(a.id)}" onchange="updateAttr('${a.id}',this.value)"></div>
+        </div>`).join('');
+
+    // Defenses
+    let toughTotal=getAttr('sta')+(state.defenses.toughness||0);
+    state.powers.forEach(p=>{ if(p.effectId==='protection')toughTotal+=p.ranks; });
+    document.getElementById('defenses-grid').innerHTML=dictDefenses.map(d=>{
+        const base=d.isToughness?getAttr('sta'):getAttr(d.base);
+        const bought=state.defenses[d.id]||0;
+        const tot=d.isToughness?toughTotal:(base+bought);
+        const note=d.isToughness?'Vigor + Proteção':'Base: '+d.base.toUpperCase()+' ('+base+')';
+        return `<div class="stat-card">
+            <div class="stat-card-header">
+                <div class="stat-title">${d.pt}</div>
+                <div class="stat-sub">${d.en} · ${note}</div>
+            </div>
+            <div style="font-size:2em;font-family:'Bangers',Impact,sans-serif;color:var(--comic-red);margin:6px 0;line-height:1;">${tot}</div>
+            ${d.isToughness?`<div style="font-size:.8em;font-weight:700;color:#666;">Vem de Vigor + Proteção</div>`:
+            `<div class="stat-input">+<input type="number" value="${bought}" min="0" onchange="updateDef('${d.id}',this.value)" style="width:55px;"> comprado</div>`}
+        </div>`;}).join('');
+
+    // Skills
+    document.getElementById('skills-list').innerHTML=state.skills.map((sk,i)=>{
+        const def=dictSkills.find(d=>d.id===sk.id)||{pt:sk.id,en:'',base:'int',custom:true};
+        const base=getAttr(def.base); const total=base+sk.ranks;
+        const nameInp=def.custom?`<input type="text" value="${sk.name||''}" placeholder="Especificar" onchange="updateSkillName(${i},this.value)" style="width:130px;padding:4px;">`:'';
+        return `<div class="list-item">
+            <div style="flex:2;"><b>${def.pt}</b> ${nameInp} <span class="en">${def.en}</span></div>
+            <div style="font-size:.85em;color:var(--muted);width:90px;">Base ${def.base.toUpperCase()} (${base})</div>
+            <div>Ranks: <input type="number" value="${sk.ranks}" min="0" style="width:48px;padding:4px;" onchange="updateSkillRank(${i},this.value)"></div>
+            <div style="width:55px;font-weight:700;color:var(--primary)">+${total}</div>
+            ${def.custom?`<button class="btn-danger" onclick="removeSkill(${i})">✕</button>`:''}
+        </div>`;}).join('');
+
+    // Advantages
+    document.getElementById('advSelect').innerHTML='<option value="">-- Selecionar --</option>'+
+        dictAdvantages.map(a=>`<option value="${a.id}">${a.pt}</option>`).join('');
+    document.getElementById('advantages-list').innerHTML=state.advantages.map((adv,i)=>{
+        const def=dictAdvantages.find(d=>d.id===adv.id); if(!def)return '';
+        return `<div class="list-item">
+            <div class="flex-1"><b>${def.pt}</b> <span class="en">${def.en}</span></div>
+            <div>Ranks: <input type="number" value="${adv.ranks}" min="1" style="width:48px;padding:4px;" onchange="updateAdvRank(${i},this.value)"></div>
+            <button class="btn-danger" onclick="removeAdv(${i})">✕</button>
+        </div>`;}).join('');
+
+    // Powers
+    document.getElementById('powSelect').innerHTML='<option value="">-- Selecionar Efeito --</option>'+
+        dictEffects.map(e=>`<option value="${e.id}">${e.pt} (${e.cost}pt${e.type==='per_rank'?'/rank':' fixo'})</option>`).join('');
+
+    // Track open state across re-renders
+    if(!window._openPowers) window._openPowers = new Set();
+
+    document.getElementById('powers-list').innerHTML=state.powers.map((p,pi)=>{
+        const eff=dictEffects.find(e=>e.id===p.effectId); if(!eff)return '';
+        const cost=calcPowerCost(p);
+        const isOpen=window._openPowers.has(pi);
+
+        // Build modifier tags for collapsed summary
+        const modTags = p.modifiers.map(m=>{
+            const md=dictModifiers.find(x=>x.id===m.modId); if(!md)return '';
+            const isPos=md.cost>0||(md.type==='flat'&&md.cost>=0);
+            const isRem=md.type.includes('removable');
+            const col=isRem?'#d29922':isPos?'#2ea043':'#f85149';
+            return `<span style="display:inline-block;padding:2px 7px;border-radius:10px;font-size:.75em;font-weight:700;background:${col}22;color:${col};border:1px solid ${col}44;">${md.pt}</span>`;
+        }).join(' ');
+
+        // Build modifier impact summary lines (shown inside expanded)
+        const modImpact = p.modifiers.map(m=>{
+            const md=dictModifiers.find(x=>x.id===m.modId); if(!md)return '';
+            const isRem=md.type.includes('removable');
+            let impact='';
+            if(md.id==='ranged')impact=`→ Ataque passa a ser <b>à distância</b>. Alcance: ${p.ranks*30}m. Requer linha de visão.`;
+            else if(md.id==='area')impact=`→ Afeta área de ${p.ranks*7.5}m de raio. Alvos rolam Esquiva para reduzir efeito à metade.`;
+            else if(md.id==='multiattack')impact=`→ Pode atacar múltiplos alvos. Cada alvo extra reduz o bônus de ataque em -2.`;
+            else if(md.id==='continuous')impact=`→ Efeito persiste sem ação de manutenção. Desativar é uma ação livre.`;
+            else if(md.id==='perception_range')impact=`→ Alcance = percepção. <b>Não exige teste de ataque</b>, mas pode ser resistido.`;
+            else if(md.id==='penetrating')impact=`→ Ignora a Resistência Impenetrável do alvo por completo.`;
+            else if(md.id==='selective')impact=`→ Você escolhe quem é afetado dentro da área — aliados ficam seguros.`;
+            else if(md.id==='subtle')impact=`→ O poder é difícil de detectar. -10 em testes de Percepção para notar.`;
+            else if(md.id==='reaction')impact=`→ O poder ativa automaticamente como reação, sem gastar sua ação.`;
+            else if(md.id==='tiring')impact=`→ Cada uso causa 1 nível de Fadiga acumulada. 3 níveis = Incapacitado.`;
+            else if(md.id==='removable')impact=`→ O poder está em um dispositivo que pode ser roubado, desarmado ou destruído. Economizou ${Math.ceil(cost/5)} pts.`;
+            else if(md.id==='easily_removable')impact=`→ Dispositivo fácil de remover — qualquer um pode tirá-lo. Economizou ${Math.ceil(cost/5)*2} pts.`;
+            else if(md.id==='check_required')impact=`→ Exige um teste antes de usar. Em falha, o poder não funciona na rodada.`;
+            else if(md.id==='unreliable')impact=`→ Role 1d20 antes de usar. Em 1-10, o poder falha automaticamente.`;
+            else if(md.id==='fades')impact=`→ O poder perde 1 rank por uso. Se chegar a 0, precisar de descanso para restaurar.`;
+            else if(md.id==='distracting')impact=`→ Usar o poder deixa você vulnerável: -5 em Esquiva/Aparar até seu próximo turno.`;
+            else if(md.id==='resistible')impact=`→ O alvo pode resistir com Fortitude ou Vontade (o Mestre decide qual).`;
+            else if(md.id==='sense_dependent')impact=`→ Bloquear o sentido (ex: cegar o usuário) desativa o poder completamente.`;
+            else if(md.id==='alternate_effect')impact=`→ Modo alternativo deste poder. Você usa um OU outro, nunca ambos ao mesmo tempo.`;
+            else if(md.id==='impervious')impact=`→ Ataques com Dano abaixo de ${Math.ceil(p.ranks/2)} não causam dano — simplesmente ignorados.`;
+            else if(md.id==='accurate')impact=`→ +${m.ranks*2} no bônus de ataque deste poder especificamente.`;
+            else if(md.id==='multiple_minions')impact=`→ Invoca ${Math.pow(2,m.ranks)} cópias/capangas de uma vez.`;
+            else if(md.id==='active')impact=`→ Os capangas invocados agem de forma autônoma no combate.`;
+            else if(md.id==='secondary_effect')impact=`→ O efeito persiste no alvo por mais 1 rodada após a ativação inicial.`;
+            else if(md.id==='homing')impact=`→ Se o ataque errar, ele reorienta e tenta acertar novamente na próxima rodada.`;
+            else if(md.id==='split')impact=`→ Você pode dividir os ranks entre múltiplos alvos (ex: Dano 10 → 5+5 em dois alvos).`;
+            else if(md.id==='affects_insubstantial')impact=`→ O poder também afeta alvos em forma gasosa, incorporal ou fantasmagórica.`;
+            else if(md.id==='affects_corporeal')impact=`→ Você mesmo sendo incorporal, pode afetar alvos físicos normalmente com este poder.`;
+            else if(md.id==='sustained')impact=`→ Exige ação livre a cada rodada para manter. Se você for incapacitado, o efeito cessa.`;
+            else if(md.id==='permanent')impact=`→ O efeito não pode ser desativado nem pelo próprio usuário — está sempre ativo.`;
+            else if(md.id==='inaccurate')impact=`→ -${m.ranks*2} no bônus de ataque deste poder especificamente.`;
+            else if(md.id==='close_flaw')impact=`→ O poder só funciona em corpo-a-corpo, mesmo que o efeito base permita distância.`;
+            else if(md.id==='feedback')impact=`→ Quando o alvo sofre dano, você também sofre o mesmo dano.`;
+            else if(md.id==='grab_based')impact=`→ Só funciona se você já tiver agarrado o alvo com sucesso antes de usar.`;
+            else if(md.id==='noticeable')impact=`→ O uso do poder é obviamente visível — impossível usá-lo de forma discreta.`;
+            else if(md.id==='activation')impact=`→ Requer uma ação de movimento para ativar antes de usar normalmente.`;
+            else if(md.id==='diminished_range')impact=`→ O alcance do poder é reduzido em 1 categoria (Normal→Cor-a-cor, Dist.→Normal).`;
+            else if(md.id==='linked')impact=`→ Este poder é sempre ativado junto com outro poder ligado (sem custo de ação extra).`;
+            else if(md.id==='reversible')impact=`→ O efeito pode ser desfeito pelo usuário a qualquer momento como ação livre.`;
+            else if(md.id==='insidious')impact=`→ A vítima não percebe que foi afetada até alguém fazer um teste de Percepção CD 20.`;
+            else if(md.id==='dynamic_alternate')impact=`→ Efeito alternativo dinâmico — pode dividir pontos entre ambos os poderes livremente a cada turno.`;
+            else impact=`→ Modifica o custo em ${md.cost>0?'+':''+(md.cost)} pt${md.type==='per_rank'?` × ${m.ranks} ranks = ${md.cost*m.ranks} pts`:''}.`;
+
+            const isPos=md.cost>=0&&!md.type.includes('removable');
+            const col=md.type.includes('removable')?'#d29922':isPos?'#58a6ff':'#f85149';
+            return `<div style="display:flex;gap:8px;padding:6px 10px;border-radius:5px;background:${col}11;border-left:3px solid ${col};margin-bottom:5px;font-size:.87em;">
+                <span style="color:${col};font-weight:700;min-width:130px;">${md.pt}</span>
+                <span style="color:var(--text);">${impact}</span>
+            </div>`;
+        }).join('');
+
+        const modSel=`<select id="ms-${pi}" style="padding:4px;font-size:.88em;max-width:280px;"><option value="">+ Modificador/Falha</option>`+
+            dictModifiers.map(m=>`<option value="${m.id}">${m.pt} (${m.cost>0?'+':''+(m.cost)})</option>`).join('')+`</select>
+            <button style="padding:4px 10px;" onclick="addMod(${pi})">Add</button>`;
+
+        return `<div class="power-card" style="padding:0;overflow:hidden;">
+            <!-- COLLAPSED HEADER — always visible, click to toggle -->
+            <div onclick="togglePower(${pi})" style="display:flex;justify-content:space-between;align-items:center;padding:12px 15px;cursor:pointer;gap:10px;flex-wrap:wrap;transition:.15s;" onmouseover="this.style.background='rgba(255,255,255,.04)'" onmouseout="this.style.background=''">
+                <div style="display:flex;align-items:center;gap:10px;flex:1;flex-wrap:wrap;min-width:0;">
+                    <span style="font-size:1.1em;color:${isOpen?'var(--primary)':'var(--accent)'};transition:.15s;">${isOpen?'▾':'▸'}</span>
+                    <b style="font-size:1em;color:var(--text);white-space:nowrap;">${p.name||'Poder sem nome'}</b>
+                    <span class="badge">${eff.pt}</span>
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;">${modTags}</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:14px;flex-shrink:0;">
+                    <span style="font-size:.9em;color:var(--muted);">Rank ${p.ranks}</span>
+                    <span class="power-cost">${cost} pts</span>
+                    <button class="btn-danger" onclick="event.stopPropagation();removePower(${pi})">✕</button>
+                </div>
+            </div>
+
+            <!-- EXPANDED BODY -->
+            <div id="power-body-${pi}" style="display:${isOpen?'block':'none'};border-top:1px solid var(--border);padding:15px;">
+                <!-- Name + Rank edit -->
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;">
+                    <div>
+                        <label style="display:block;margin-bottom:4px;">Nome do Poder</label>
+                        <input type="text" value="${p.name||''}" placeholder="Nome do Poder" onchange="updatePowerName(${pi},this.value)" style="font-weight:700;width:250px;">
+                    </div>
+                    <div>
+                        <label style="display:block;margin-bottom:4px;">Graduações (Ranks)</label>
+                        <input type="number" value="${p.ranks}" min="1" style="width:70px;font-size:1.2em;text-align:center;" onchange="updatePowerRank(${pi},this.value)">
+                    </div>
+                    <div style="padding-top:22px;">
+                        <span class="badge" style="color:var(--muted);">${eff.cost}pt${eff.type==='per_rank'?'/rank':' fixo'}</span>
+                    </div>
+                </div>
+
+                <!-- Modifier impact summaries -->
+                ${p.modifiers.length>0?`<div style="margin-bottom:12px;">
+                    <div style="font-size:.82em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Efeito dos Modificadores neste Poder:</div>
+                    ${modImpact}
+                </div>`:''}
+
+                <!-- Modifier controls -->
+                <div style="margin-bottom:10px;">
+                    <div style="font-size:.82em;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">Adicionar Modificador / Falha:</div>
+                    ${modSel}
+                </div>
+
+                <!-- Existing modifier rank editors -->
+                ${p.modifiers.length>0?`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px;">
+                    ${p.modifiers.map((m,mi)=>{
+                        const md=dictModifiers.find(x=>x.id===m.modId); if(!md)return '';
+                        const isRem=md.type.includes('removable');
+                        return `<div class="mod-row">
+                            <div class="flex-1" style="font-size:.88em;">${md.pt}</div>
+                            ${!isRem?`<input type="number" value="${m.ranks}" min="1" style="width:46px;padding:2px;" onchange="updateModRank(${pi},${mi},this.value)"> ranks`:''}
+                            <button class="btn-danger" onclick="removeMod(${pi},${mi})">✕</button>
+                        </div>`;}).join('')}
+                </div>`:''}
+            </div>
+        </div>`;}).join('');
+
+
+    // HUD Combat checks
+    const np=state.np;
+    const dodge=getAttr('agl')+(state.defenses.dodge||0);
+    const parry=getAttr('fgt')+(state.defenses.parry||0);
+    const fort=getAttr('sta')+(state.defenses.fortitude||0);
+    const will=getAttr('awe')+(state.defenses.will||0);
+    let maxSk=0;
+    state.skills.forEach(sk=>{const d=dictSkills.find(x=>x.id===sk.id);if(d){const t=getAttr(d.base)+sk.ranks;if(t>maxSk)maxSk=t;}});
+    const chk=(n,v,m)=>`<div class="val-row"><span class="${v<=m?'ok':'err'}">${n}</span><b>${v}/${m}</b></div>`;
+    document.getElementById('hudLimits').innerHTML=
+        chk('Esq+Res',dodge+toughTotal,np*2)+chk('Apa+Res',parry+toughTotal,np*2)+
+        chk('For+Von',fort+will,np*2)+chk('Perícia máx.',maxSk,np+10);
+
+    const initAdv=state.advantages.find(a=>a.id==='improved_initiative');
+    const initV=getAttr('agl')+(initAdv?initAdv.ranks*4:0);
+    document.getElementById('hudInit').textContent=(initV>=0?'+':'')+initV;
+    const str=getAttr('str');
+    const kgRaw=25*Math.pow(2,str);
+    document.getElementById('hudCarry').textContent=str<-2?'Mínima':kgRaw>=1000?(kgRaw/1000).toFixed(1)+' ton':kgRaw+' kg';
+    const spd=state.powers.find(p=>p.effectId==='flight'||p.effectId==='speed');
+    document.getElementById('hudSpeed').textContent=spd?(30*Math.pow(2,spd.ranks)*0.3).toFixed(0)+' m/turno':'9 m/turno';
+    renderFichaView();
+}
+
+/* ===== ACTIONS ===== */
+function addComplication(){state.complications.push({name:'',desc:''});renderAll();}
+function updateComp(i,k,v){state.complications[i][k]=v;}
+function removeComp(i){state.complications.splice(i,1);renderAll();}
+function addCustomSkill(){state.skills.push({id:'expertise',name:'Nova Especialidade',ranks:0});renderAll();}
+function updateSkillRank(i,v){state.skills[i].ranks=parseInt(v)||0;renderAll();}
+function updateSkillName(i,v){state.skills[i].name=v;}
+function removeSkill(i){state.skills.splice(i,1);renderAll();}
+function addAdvantage(){const s=document.getElementById('advSelect').value;if(!s)return;const e=state.advantages.find(a=>a.id===s);if(e)e.ranks++;else state.advantages.push({id:s,ranks:1});renderAll();}
+function updateAdvRank(i,v){state.advantages[i].ranks=parseInt(v)||1;renderAll();}
+function removeAdv(i){state.advantages.splice(i,1);renderAll();}
+function addPower(){
+    const s=document.getElementById('powSelect').value;if(!s)return;
+    const e=dictEffects.find(x=>x.id===s);
+    const newIdx=state.powers.length;
+    state.powers.push({id:Date.now()+'',effectId:s,name:e.pt,ranks:1,modifiers:[]});
+    if(!window._openPowers) window._openPowers=new Set();
+    window._openPowers.add(newIdx); // auto-open the newly added power
+    renderAll();
+}
+function updatePowerName(pi,v){state.powers[pi].name=v;}
+function updatePowerRank(pi,v){state.powers[pi].ranks=parseInt(v)||1;renderAll();}
+function removePower(pi){
+    state.powers.splice(pi,1);
+    // Rebuild open set — shift indices down
+    if(window._openPowers){
+        const next=new Set();
+        window._openPowers.forEach(i=>{if(i<pi)next.add(i);else if(i>pi)next.add(i-1);});
+        window._openPowers=next;
+    }
+    renderAll();
+}
+function togglePower(pi){
+    if(!window._openPowers) window._openPowers=new Set();
+    if(window._openPowers.has(pi)){
+        window._openPowers.delete(pi);
+    } else {
+        window._openPowers.add(pi);
+        // Open the help drawer with info about this specific power
+        const p = state.powers[pi];
+        if(p){
+            document.getElementById('helpTitle').textContent = '📖 Guia do Poder';
+            document.getElementById('helpBody').innerHTML = buildPowerHelp(p.effectId, p.name);
+            document.getElementById('helpDrawer').classList.add('open');
+        }
+    }
+    renderAll();
+}
+function addMod(pi){const s=document.getElementById(`ms-${pi}`).value;if(!s)return;const md=dictModifiers.find(x=>x.id===s);state.powers[pi].modifiers.push({modId:s,ranks:(md.type==='flat'||md.type.includes('removable'))?1:state.powers[pi].ranks});renderAll();}
+function updateModRank(pi,mi,v){state.powers[pi].modifiers[mi].ranks=parseInt(v)||1;renderAll();}
+function removeMod(pi,mi){state.powers[pi].modifiers.splice(mi,1);renderAll();}
+
+function exportJSON(){
+    const s="data:text/json;charset=utf-8,"+encodeURIComponent(JSON.stringify(state,null,2));
+    const a=document.createElement('a');a.href=s;a.download=`mm3e_${(state.characterName||'ficha').replace(/\W/g,'')}.json`;a.click();
+}
+function importJSON(e){
+    const f=e.target.files[0];if(!f)return;
+    const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.np){state=d;renderAll();alert('Ficha carregada!');}}catch{alert('Arquivo inválido.');}};
+    r.readAsText(f);
+}
+
+/* ===== PRINT: show ALL sections ===== */
+window.addEventListener('beforeprint', () => {
+    document.querySelectorAll('.tab-content').forEach(t => { t.style.display = 'block'; });
+    document.querySelectorAll('.print-section-title').forEach(t => { t.style.display = 'block'; });
+});
+window.addEventListener('afterprint', () => {
+    document.querySelectorAll('.tab-content').forEach(t => { t.style.display = ''; });
+    document.querySelectorAll('.print-section-title').forEach(t => { t.style.display = ''; });
+    // re-activate the correct tab
+    document.getElementById(currentTab).style.display = 'block';
+});
+
+// Init
+initBaseSkills();
+document.getElementById('helpBody').innerHTML = buildHelp('tab-base');
+renderAll();
+</script>
+</body>
+</html>
